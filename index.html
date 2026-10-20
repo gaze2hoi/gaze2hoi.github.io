@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c0c0f">
+  <meta name="description" content="Gaze2HOI connects gaze-aware intention inference, anticipatory contact grounding, and motion diffusion to forecast egocentric hand-object interactions.">
+  <title>Gaze2HOI</title>
+  <link rel="icon" href="assets/favicon.svg?v=8" type="image/svg+xml" sizes="any">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/figure2.css">
+  <link rel="stylesheet" href="css/figure4.css">
+  <link rel="stylesheet" href="css/figure5.css">
+  <link rel="stylesheet" href="css/figure8.css">
+  <script src="media/figure1/staged-replay/timeline.js" defer></script>
+  <script src="media/figure1/guided-replay/gaze-data.js" defer></script>
+  <script src="media/figure1/intention-reveal/objects.js" defer></script>
+  <script src="media/figure1/tgsm-history/history-data.js" defer></script>
+  <script src="media/figure1/structured-intentions/intentions.js" defer></script>
+  <script src="media/figure1/observed-bridge/data.js" defer></script>
+  <script src="media/figure1/putdown-placement/data.js" defer></script>
+  <script src="media/figure1/putdown-remote-occlusion/data.js" defer></script>
+  <script src="js/placement-overlay.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/figure2.js" defer></script>
+  <script src="js/figure3.js" defer></script>
+  <script src="js/figure5.js" defer></script>
+  <script src="js/figure8.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="Gaze2HOI home"><img class="gaze-mark" src="assets/favicon.svg?v=8" width="32" height="32" alt="" aria-hidden="true">Gaze2HOI</a>
+    <nav aria-label="Main navigation">
+      <a href="#overview">Insight</a><a href="#egoaim">Benchmark</a><a href="#method">Method</a><a href="#results">Results</a><a href="#citation">Citation</a>
+      <span class="nav-indicator" aria-hidden="true"></span>
+    </nav>
+    <a class="header-contact" href="mailto:chuanyang.ma@bupt.edu.cn">Contact Us <svg class="contact-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><path d="M3.5 12.5 12 4M7 4h5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </header>
+
+  <main id="main">
+    <section class="hero section-wrap" id="top" aria-labelledby="paper-title">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 id="paper-title"><span class="project-name">Gaze2HOI</span><span class="sr-only">: </span><span class="paper-title">Gaze-Aware Intention Disambiguation for Egocentric Hand-Object Interaction Forecasting</span></h1>
+          <div class="authors-block">
+            <p class="authors">
+              <span class="author-row"><span>Chuanyang Ma<sup>1</sup>,</span> <span>Chenye Wang<sup>2</sup>,</span> <span>Yixuan Wang<sup>1</sup>,</span> <span>Huiling Zhou<sup>1</sup>,</span> <span>Xingqun Qi<sup>3</sup>,</span></span>
+              <span class="author-row"><span>Muyi Sun<sup>1</sup>,</span> <span>Man Zhang<sup>1</sup>,</span> <span>Caifeng Shan<sup>4</sup>,</span> <span>Zhenan Sun<sup>5</sup></span></span>
+            </p>
+            <div class="affiliations"><span><sup>1</sup> Beijing University of Posts and Telecommunications</span><span><sup>2</sup> The Hong Kong University of Science and Technology</span><span><sup>3</sup> North China Electric Power University (Beijing)</span><span><sup>4</sup> Nanjing University</span><span><sup>5</sup> Institute of Automation, Chinese Academy of Sciences</span></div>
+          </div>
+          <div class="resource-links" role="group" aria-label="Project resources">
+            <a class="button button-primary" href="assets/documents/gaze2hoi-paper.pdf" target="_blank" rel="noopener noreferrer" aria-label="Read the Gaze2HOI manuscript (PDF)" title="Read the paper (PDF)">
+              <svg class="resource-icon" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. --><path d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 144-208 0c-35.3 0-64 28.7-64 64l0 144-48 0c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128zM176 352l32 0c30.9 0 56 25.1 56 56s-25.1 56-56 56l-16 0 0 32c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-48 0-80c0-8.8 7.2-16 16-16zm32 80c13.3 0 24-10.7 24-24s-10.7-24-24-24l-16 0 0 48 16 0zm96-80l32 0c26.5 0 48 21.5 48 48l0 64c0 26.5-21.5 48-48 48l-32 0c-8.8 0-16-7.2-16-16l0-128c0-8.8 7.2-16 16-16zm32 128c8.8 0 16-7.2 16-16l0-64c0-8.8-7.2-16-16-16l-16 0 0 96 16 0zm80-112c0-8.8 7.2-16 16-16l48 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 32 32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 48c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-64 0-64z"/></svg>
+              <span>Paper</span> <span class="button-note">PDF</span>
+            </a>
+            <button class="button button-secondary" type="button" aria-disabled="true" aria-label="arXiv, coming soon" title="arXiv — coming soon">
+              <svg class="resource-icon" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. --><path d="M32 32l448 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96L0 64C0 46.3 14.3 32 32 32zm0 128l448 0 0 256c0 35.3-28.7 64-64 64L96 480c-35.3 0-64-28.7-64-64l0-256zm128 80c0 8.8 7.2 16 16 16l160 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-160 0c-8.8 0-16 7.2-16 16z"/></svg>
+              <span>arXiv</span>
+            </button>
+            <a class="button button-secondary" href="https://github.com/gaze2hoi/Gaze2HOI" target="_blank" rel="noopener noreferrer" aria-label="Code and Model: inference code and model downloads" title="Inference code and model downloads">
+              <svg class="resource-icon" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+              <span>Code &amp; Model</span>
+            </a>
+            <a class="button button-secondary" href="https://huggingface.co/datasets/gaze2hoi/EgoAIM-Demo" target="_blank" rel="noopener noreferrer" aria-describedby="data-release-note" title="Download EgoAIM demo samples">
+              <svg class="resource-icon" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. --><path d="M448 80l0 48c0 44.2-100.3 80-224 80S0 172.2 0 128L0 80C0 35.8 100.3 0 224 0S448 35.8 448 80zM393.2 214.7c20.8-7.4 39.9-16.9 54.8-28.6L448 288c0 44.2-100.3 80-224 80S0 332.2 0 288L0 186.1c14.9 11.8 34 21.2 54.8 28.6C99.7 230.7 159.5 240 224 240s124.3-9.3 169.2-25.3zM0 346.1c14.9 11.8 34 21.2 54.8 28.6C99.7 390.7 159.5 400 224 400s124.3-9.3 169.2-25.3c20.8-7.4 39.9-16.9 54.8-28.6l0 85.9c0 44.2-100.3 80-224 80S0 476.2 0 432l0-85.9z"/></svg>
+              <span>Dataset</span>
+            </a>
+          </div>
+          <p class="resource-note" id="data-release-note">Demo samples are available now; the full EgoAIM dataset will be released upon paper acceptance.</p>
+        </div>
+        <div class="hero-visual hero-demo" id="demo" data-phase="observed">
+          <div class="video-frame">
+            <video id="hero-video" data-scene="establish-contact" data-phase="observed" autoplay loop muted playsinline disablepictureinpicture disableremoteplayback preload="auto" poster="media/figure1/poster.webp" tabindex="-1" aria-label="Establish Contact: observed RGB, possible interactions on the last observed frame, RGB replay with gaze, progressive TGSM history on the last observed frame, then predicted interaction"><source src="media/figure1/staged-replay/four-phases.webm" type="video/webm"><source src="media/figure1/staged-replay/four-phases.mp4" type="video/mp4">Your browser does not support video.</video>
+            <div class="observation-reveal" id="observation-reveal">
+              <img class="observed-freeze" id="observed-freeze" width="1408" height="1408" alt="" aria-hidden="true" hidden>
+              <svg class="object-highlights" id="object-highlights" viewBox="0 0 1408 1408" aria-hidden="true" focusable="false" hidden></svg>
+              <div class="intention-question" id="intention-question" hidden>
+                <img src="media/figure1/intention-reveal/question-icon.png" width="118" height="158" alt="" aria-hidden="true">
+                <p>What will the user do next?</p>
+              </div>
+            </div>
+            <svg class="gaze-replay-overlay" id="gaze-replay-overlay" viewBox="0 0 1408 1408" aria-hidden="true" focusable="false" hidden>
+              <g id="gaze-replay-dot"><circle class="gaze-dot-outline" r="11" fill="#fff"/><circle class="gaze-dot-core" r="8.5" fill="#ff1818"/></g>
+            </svg>
+            <div class="geometry-bridge" id="geometry-bridge" aria-hidden="true" hidden>
+              <img id="geometry-bridge-scene" width="1408" height="1408" alt="">
+              <img id="geometry-bridge-foreground" width="1408" height="1408" alt="">
+            </div>
+            <canvas class="tgsm-history-overlay" id="tgsm-history-overlay" width="336" height="336" aria-hidden="true" hidden></canvas>
+            <div class="predicted-intention" id="predicted-intention" hidden>
+              <p class="predicted-intention-label">Predicted intention</p>
+              <div class="predicted-intention-rows" id="predicted-intention-rows"></div>
+            </div>
+            <canvas class="placement-overlay" id="placement-overlay" width="1408" height="1408" aria-hidden="true" hidden></canvas>
+          </div>
+          <div class="demo-examples" role="group" aria-label="Select an interaction example">
+            <button type="button" data-example="establish-contact" aria-pressed="true" aria-controls="hero-video"><span class="demo-label">Establish Contact</span></button>
+            <button type="button" data-example="move" aria-pressed="false" aria-controls="hero-video"><span class="demo-label">Move</span></button>
+            <button type="button" data-example="manipulate" aria-pressed="false" aria-controls="hero-video"><span class="demo-label">Manipulate</span></button>
+            <button type="button" data-example="put-down" aria-pressed="false" aria-controls="hero-video"><span class="demo-label">Put Down</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="overview" class="overview-section" aria-labelledby="overview-title">
+      <div class="overview section-wrap">
+        <div class="section-heading"><p class="eyebrow"><a class="overview-jump" href="#overview">The idea</a></p><h2 id="overview-title">A future interaction begins<br>with an intention.</h2></div>
+        <div class="overview-text"><p>Similar observation histories can precede futures with different intentions, contact configurations, and trajectories. Gaze2HOI reduces ambiguity hierarchically: gaze helps infer intentions, contact grounding provides <span class="overview-closing">spatial guidance, and diffusion generates coordinated motion.</span></p></div>
+        <div class="figure2" id="idea-animation" role="region" aria-label="Animated Figure 2: hierarchical intention disambiguation" data-step="0">
+          <p class="sr-only">Figure 2 follows a U-shaped path from observations at the lower left, through gaze-aware intention inference at the upper left, geometric ambiguity and contact grounding across the top, to joint hand-object forecasting at the lower right. Original source elements appear progressively and remain together in the completed diagram.</p>
+          <div class="f2-heading">
+            <div class="f2-heading-copy"><span class="f2-kicker" id="f2-stage-label">Observed history</span><span id="f2-stage-title" class="sr-only">One second of observations.</span></div>
+            <div class="f2-controls"><span class="f2-count" aria-hidden="true"><b id="f2-count">01</b> / 06</span><button class="f2-play" type="button" aria-label="Pause diagram animation" aria-pressed="false" title="Pause animation"><svg class="f2-pause-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5v10M13 5v10"/></svg><svg class="f2-play-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6Z"/></svg></button><button class="f2-expand" type="button" aria-label="Expand Figure 2" title="Expand diagram"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3H3v4m10-4h4v4M3 13v4h4m10-4v4h-4"/></svg><span>Expand</span></button></div>
+          </div>
+          <div class="f2-board"><div class="f2-scroll"><div class="f2-canvas">
+<svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs><filter id="f2-white-ink" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -1 0 0 0 1"/><feComposite in2="SourceGraphic" operator="in"/></filter></defs></svg>
+<div class="f2-phase f2-observations" data-phase="0">
+<div class="f2-node f2-dashed f2-semantic-box" style="--x:1.32832;--y:53.7805;--w:50.2668;--h:45.8287" ></div>
+<div class="f2-node f2-io-row f2-input-row" style="--x:2.4009;--y:67.383065753;--w:23.862003563;--h:4.35627"><span class="f2-io-label">Input:</span><img class="f2-io-formula f2-monochrome" src="media/figure2/original/image30.svg" alt="Observed video frames V minus 29 through V zero" loading="lazy" decoding="async"></div>
+<img class="f2-node f2-image f2-observation" style="--x:4.0606;--y:74.5461;--w:12.4145;--h:22.0881" src="media/figure2/display/rgb-01.webp" alt="First observed RGB frame" loading="lazy" decoding="async">
+<img class="f2-node f2-image f2-observation" style="--x:20.2846;--y:74.5461;--w:12.4145;--h:22.0881" src="media/figure2/display/rgb-02.webp" alt="Intermediate observed RGB frame" loading="lazy" decoding="async">
+<img class="f2-node f2-image f2-observation" style="--x:36.5085;--y:74.5461;--w:12.4145;--h:22.0881" src="media/figure2/display/rgb-05.webp" alt="Last observed RGB frame" loading="lazy" decoding="async">
+<div class="f2-node f2-text f2-ellipsis" style="--x:16.5971;--y:82.1361;--w:3.5655;--h:6.2946" >···</div>
+<div class="f2-node f2-text f2-ellipsis" style="--x:32.8211;--y:82.1361;--w:3.5655;--h:6.2946" >···</div>
+</div>
+<div class="f2-phase f2-semantic" data-phase="1">
+<div class="f2-node f2-text f2-challenge" style="--x:3.87014;--y:56.043;--w:21.6222;--h:11.0156" ><span>Challenge 1</span><strong>Semantic ambiguity</strong></div>
+<img class="f2-node f2-image f2-cloud" style="--x:30.4211;--y:56.4475;--w:18.3435;--h:14.2781" src="media/figure2/cloud-semantic-dark.svg" alt="" loading="lazy" decoding="async" >
+<div class="f2-node f2-text f2-question" style="--x:32.4224;--y:57.9311;--w:15.2663;--h:4.72098" >What to interact with?</div>
+<img class="f2-node f2-image " style="--x:26.4169;--y:62.5448;--w:3.44847;--h:8.1808" src="media/figure2/display/question.webp" alt="" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-object" style="--x:35.301333;--y:63.068197;--w:1.560584;--h:3.051481" src="media/figure2/display/object-moka-pot.webp" alt="Moka pot" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-object" style="--x:33.459221;--y:63.076128;--w:0.829819;--h:3.042450" src="media/figure2/display/object-phone.webp" alt="Phone" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-object" style="--x:42.624679;--y:63.152806;--w:2.249093;--h:2.897395" src="media/figure2/display/object-eraser.webp" alt="Eraser" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-object" style="--x:46.346492;--y:62.862365;--w:0.275723;--h:3.044171" src="media/figure2/display/object-marker.webp" alt="Marker" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-object" style="--x:40.174558;--y:63.064376;--w:1.705145;--h:3.060122" src="media/figure2/display/object-cube.webp" alt="Cube" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-object" style="--x:37.569206;--y:63.086021;--w:2.038921;--h:3.025772" src="media/figure2/display/object-mug.webp" alt="Mug" loading="lazy" decoding="async" >
+</div>
+<div class="f2-phase f2-flow-phase" data-phase="2" aria-hidden="true">
+<img class="f2-node f2-image f2-flow-arrow f2-flow-base" style="--x:11.5389;--y:39.6641;--w:5.51756;--h:9.81695" src="media/figure2/original/image22.svg" alt="" loading="lazy" decoding="async" data-rotation="270">
+<img class="f2-node f2-image f2-flow-arrow f2-flow-front" style="--x:11.5389;--y:39.6641;--w:5.51756;--h:9.81695" src="media/figure2/original/image22.svg" alt="" loading="lazy" decoding="async" data-rotation="270">
+</div>
+<div class="f2-phase f2-tgsm" data-phase="2">
+<img class="f2-node f2-image f2-monochrome" style="--x:2.53538;--y:6.41074;--w:3.44847;--h:4.39706" src="media/figure2/display/gaze-eye.webp" alt="Gaze cues" loading="lazy" decoding="async" >
+<div class="f2-node f2-text f2-label" style="--x:-0.4726;--y:10.9064;--w:9.4644;--h:4.721" >Gaze cues</div>
+<div class="f2-node f2-text f2-label" style="--x:-0.4726;--y:27.2604;--w:9.4644;--h:4.721" >Ego-RGBs</div>
+<img class="f2-node f2-image f2-stack-frame" style="--x:1.92952;--y:19.0065;--w:3.44847;--h:6.1356" src="media/figure2/display/rgb-01.webp" alt="" loading="lazy" decoding="async" >
+<img class="f2-node f2-image f2-stack-frame" style="--x:2.23245;--y:19.5455;--w:3.44847;--h:6.1356" src="media/figure2/display/rgb-02.webp" alt="" loading="lazy" decoding="async" >
+<img class="f2-node f2-image f2-stack-frame" style="--x:2.53538;--y:20.0845;--w:3.44847;--h:6.1356" src="media/figure2/display/rgb-03.webp" alt="" loading="lazy" decoding="async" >
+<img class="f2-node f2-image f2-stack-frame" style="--x:2.8383;--y:20.6235;--w:3.44847;--h:6.1356" src="media/figure2/display/rgb-04.webp" alt="" loading="lazy" decoding="async" >
+<img class="f2-node f2-image f2-stack-frame" style="--x:3.14124;--y:21.1625;--w:3.44847;--h:6.1356" src="media/figure2/display/rgb-05.webp" alt="" loading="lazy" decoding="async" >
+<div class="f2-node f2-brace" style="--x:8.19237;--y:6.41073;--w:1.45603;--h:25.9966" ><svg viewBox="0 0 18 160" preserveAspectRatio="none" aria-hidden="true"><path d="M1 1 Q12 1 12 15 V65 Q12 80 17 80 Q12 80 12 95 V145 Q12 159 1 159"/></svg></div>
+<div class="f2-node f2-panel f2-tgsm-panel" style="--x:10.4092;--y:3.0659;--w:14.7939;--h:32.7802" ></div>
+<div class="f2-node f2-text f2-panel-title" style="--x:10.4092;--y:2.98659;--w:14.7939;--h:7.86831" >Temporal Gaze<br>Saliency Modulation</div>
+<img class="f2-node f2-image f2-stack-frame" style="--x:11.1353;--y:10.7623;--w:12.0697;--h:21.4746" src="media/figure2/display/rgb-01.webp" alt="" loading="lazy" decoding="async" data-tgsm-frame="0">
+<img class="f2-node f2-image f2-stack-frame" style="--x:11.4824;--y:11.3637;--w:12.0697;--h:21.4746" src="media/figure2/display/rgb-02.webp" alt="" loading="lazy" decoding="async" data-tgsm-frame="1">
+<img class="f2-node f2-image f2-stack-frame" style="--x:11.8295;--y:11.9651;--w:12.0697;--h:21.4746" src="media/figure2/display/rgb-03.webp" alt="" loading="lazy" decoding="async" data-tgsm-frame="2">
+<img class="f2-node f2-image f2-stack-frame" style="--x:12.1766;--y:12.5664;--w:12.0697;--h:21.4746" src="media/figure2/display/rgb-04.webp" alt="" loading="lazy" decoding="async" data-tgsm-frame="3">
+<img class="f2-node f2-image f2-stack-frame f2-tgsm-heat" style="--x:12.5237;--y:13.1678;--w:12.0697;--h:21.4746" src="media/figure2/display/tgsm.webp" alt="Temporal gaze saliency on the observed frame" loading="lazy" decoding="async" data-tgsm-frame="4">
+</div>
+<div class="f2-phase f2-flow-phase" data-phase="3" aria-hidden="true">
+<img class="f2-node f2-image f2-flow-arrow f2-flow-base" style="--x:25.5021;--y:12.6669;--w:5.51756;--h:9.81695" src="media/figure2/original/image22.svg" alt="" loading="lazy" decoding="async" data-rotation="0">
+<img class="f2-node f2-image f2-flow-arrow f2-flow-front" style="--x:25.5021;--y:12.6669;--w:5.51756;--h:9.81695" src="media/figure2/original/image22.svg" alt="" loading="lazy" decoding="async" data-rotation="0">
+</div>
+<div class="f2-phase f2-intentions" data-phase="3">
+<div class="f2-node f2-dashed f2-geometry-box" style="--x:29.6245;--y:0.77341;--w:41.3977;--h:36.9021" ></div>
+<div class="f2-node f2-panel f2-intention-panel" style="--x:31.4509;--y:2.55877;--w:15.0904;--h:30.7224" ></div>
+<img class="f2-source-crop f2-node f2-image f2-qwen" style="--x:36.782877;--y:5.699588;--w:4.426354;--h:7.875461" src="media/figure2/display/qwen.webp" alt="Qwen vision-language model" loading="lazy" decoding="async" >
+<div class="f2-node f2-text f2-qwen-name" style="--x:35.0459;--y:15.3195;--w:7.90038;--h:2.99952" >Qwen-VL</div>
+<div class="f2-node f2-text f2-intention-tuple" style="--x:31.6897;--y:20.0471;--w:15.3865;--h:11.9456" ><b class="f2-left-hand">L:</b><span>&lt;No intention&gt;</span><b class="f2-right-hand">R:</b><span>Reach and grasp,</span><span class="f2-tuple-continuation">Moka pot, Handle</span></div>
+<div class="f2-node f2-text f2-caption" style="--x:32.4729;--y:32.8203;--w:13.5938;--h:4.72098" >Per-hand intentions</div>
+</div>
+<div class="f2-phase f2-ambiguity" data-phase="3">
+<div class="f2-node f2-text f2-challenge" style="--x:47.0704;--y:5.62244;--w:23.3463;--h:11.0156" ><span>Challenge 2</span><strong>Geometric ambiguity</strong></div>
+<img class="f2-node f2-image f2-cloud" style="--x:51.4839;--y:18.1911;--w:18.3435;--h:14.2781" src="media/figure2/cloud-geometric-dark.svg" alt="" loading="lazy" decoding="async" >
+<div class="f2-node f2-text f2-question" style="--x:53.1566;--y:19.6741;--w:16.1262;--h:4.72098" >Where to make contact?</div>
+<img class="f2-node f2-image " style="--x:47.4386;--y:24.2884;--w:3.44847;--h:8.1808" src="media/figure2/display/question.webp" alt="" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-contact-option" style="--x:53.668482;--y:24.168096;--w:3.311624;--h:4.574340" src="media/figure2/display/contact-option-01.webp" alt="Illustrative contact configuration 1" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-contact-option" style="--x:57.519754;--y:24.655265;--w:2.619094;--h:4.580348" src="media/figure2/display/contact-option-02.webp" alt="Illustrative contact configuration 2" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-contact-option" style="--x:60.524024;--y:24.197727;--w:3.800523;--h:4.591473" src="media/figure2/display/contact-option-03.webp" alt="Illustrative contact configuration 3" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-contact-option" style="--x:64.513170;--y:24.742520;--w:2.000834;--h:4.869382" src="media/figure2/display/contact-option-04.webp" alt="Illustrative contact configuration 4" loading="lazy" decoding="async" >
+</div>
+<div class="f2-phase f2-flow-phase" data-phase="4" aria-hidden="true">
+<img class="f2-node f2-image f2-flow-arrow f2-flow-base" style="--x:69.0509;--y:12.6669;--w:5.51756;--h:9.81695" src="media/figure2/original/image22.svg" alt="" loading="lazy" decoding="async" data-rotation="0">
+<img class="f2-node f2-image f2-flow-arrow f2-flow-front" style="--x:69.0509;--y:12.6669;--w:5.51756;--h:9.81695" src="media/figure2/original/image22.svg" alt="" loading="lazy" decoding="async" data-rotation="0">
+</div>
+<div class="f2-phase f2-grounding" data-phase="4">
+<img class="f2-node f2-image f2-monochrome" style="--x:76.5918;--y:3.00165;--w:2.9312;--h:5.21526" src="media/figure2/original/image24.svg" alt="" loading="lazy" decoding="async" >
+<div class="f2-node f2-text f2-label" style="--x:72.4165;--y:7.83954;--w:10.6937;--h:4.72098" >Intention Text</div>
+<img class="f2-node f2-image f2-history-icon" style="--x:76.3187;--y:13.4044;--w:3.44847;--h:6.1356" src="media/figure2/original/image25.png" alt="" loading="lazy" decoding="async" >
+<div class="f2-node f2-text f2-label" style="--x:73.1379;--y:19.23;--w:9.25084;--h:4.72098" >HOI History</div>
+<img class="f2-source-crop f2-node f2-image f2-input-cloud" style="--x:76.060290;--y:25.405978;--w:4.233137;--h:8.003538" src="media/figure2/display/point-cloud.webp" alt="" loading="lazy" decoding="async" >
+<div class="f2-node f2-text f2-label" style="--x:73.1379;--y:33.3605;--w:9.25085;--h:4.72098" >Point Cloud</div>
+<div class="f2-node f2-brace" style="--x:82.4054;--y:6.41073;--w:1.45603;--h:25.9966" ><svg viewBox="0 0 18 160" preserveAspectRatio="none" aria-hidden="true"><path d="M1 1 Q12 1 12 15 V65 Q12 80 17 80 Q12 80 12 95 V145 Q12 159 1 159"/></svg></div>
+<div class="f2-node f2-panel f2-acg-panel" style="--x:84.7424;--y:3.0659;--w:14.7939;--h:32.7802" ></div>
+<div class="f2-node f2-text f2-panel-title" style="--x:84.9971;--y:2.98659;--w:14.2846;--h:7.86831" >Anticipatory<br>Contact Grounding</div>
+<img class="f2-source-crop f2-node f2-image f2-acg-neutral" style="--x:88.426757;--y:12.140024;--w:8.466273;--h:16.007077" src="media/figure2/display/point-cloud.webp" alt="" loading="lazy" decoding="async" >
+<img class="f2-source-crop f2-node f2-image f2-acg-color" style="--x:88.426757;--y:12.140024;--w:8.466273;--h:16.007077" src="media/figure2/display/acg-contact.webp" alt="Contact likelihood concentrated near the moka pot handle" loading="lazy" decoding="async" >
+<div class="f2-node f2-text f2-legend-label" style="--x:86.5722;--y:29.8055;--w:11.105;--h:3.4096" >Relative contact likelihood</div>
+<div class="f2-node f2-legend-gradient" style="--x:85.337529;--y:32.903446;--w:13.603694;--h:0.937297" ></div>
+<div class="f2-node f2-text f2-legend-low" style="--x:84.543183;--y:32.838310;--w:3.335173;--h:3.409602" >Low</div>
+<div class="f2-node f2-text f2-legend-high" style="--x:96.302728;--y:32.838310;--w:3.488725;--h:3.409602" >High</div>
+</div>
+<div class="f2-node f2-text f2-central-title" style="--x:19.6095;--y:41.6526;--w:63.5787;--h:6.8192" ><span>Gaze2HOI:</span> Hierarchical Intention Disambiguation</div>
+<div class="f2-phase f2-flow-phase" data-phase="5" aria-hidden="true">
+<img class="f2-node f2-image f2-flow-arrow f2-flow-base" style="--x:88.4292;--y:37.9921;--w:5.51756;--h:9.81695" src="media/figure2/original/image22.svg" alt="" loading="lazy" decoding="async" data-rotation="90">
+<img class="f2-node f2-image f2-flow-arrow f2-flow-front" style="--x:88.4292;--y:37.9921;--w:5.51756;--h:9.81695" src="media/figure2/original/image22.svg" alt="" loading="lazy" decoding="async" data-rotation="90">
+</div>
+<div class="f2-phase f2-forecast" data-phase="5">
+<canvas class="f2-node f2-forecast-image" style="--x:61.6739;--y:52.5384;--w:37.9685;--h:47.4191" width="1280" height="899" role="img" aria-label="Four chronological hand poses approaching the moka pot handle"></canvas>
+<div hidden aria-hidden="true">
+<img data-forecast-state="0" src="media/figure2/forecast-sequence/state-0.webp" alt="" loading="lazy" decoding="async">
+<img data-forecast-state="1" src="media/figure2/forecast-sequence/state-1.webp" alt="" loading="lazy" decoding="async">
+<img data-forecast-state="2" src="media/figure2/forecast-sequence/state-2.webp" alt="" loading="lazy" decoding="async">
+<img data-forecast-state="3" src="media/figure2/forecast-sequence/state-3.webp" alt="" loading="lazy" decoding="async">
+<img data-forecast-state="4" src="media/figure2/forecast-sequence/state-4.webp" alt="" loading="lazy" decoding="async">
+</div>
+<div class="f2-node f2-io-row f2-output-row" style="--x:73.889533881;--y:48.516870086;--w:24.677998735;--h:4.6017"><span class="f2-io-label">Output:</span><img class="f2-io-formula f2-monochrome" src="media/figure2/original/image29.svg" alt="Predicted future states one through thirty" loading="lazy" decoding="async"></div>
+<div class="f2-forecast-details">
+<div class="f2-node f2-target-circle" style="--x:67.0973;--y:53.1735;--w:9.98678;--h:17.7687" ></div>
+<div class="f2-zoom-reveal">
+
+
+<svg class="f2-full f2-zoom-lines" viewBox="0 0 1000 562.0438" aria-hidden="true"><path d="M685.59 313.486 L582.52 409.162"/><path class="f2-zoom-line-lower" d="M765.23 371.68 L697.01 499.455"/></svg>
+<svg class="f2-node f2-zoom-inset" style="--x:56.1966;--y:68.5661;--w:14.794;--h:26.296" viewBox="0 0 2048 2046" role="img" aria-label="Magnified hand contact on the moka pot handle" preserveAspectRatio="none"><defs><clipPath id="f2-detail-circle"><ellipse cx="1024" cy="1023" rx="1024" ry="1023"/></clipPath><clipPath id="f2-detail-foreground" clipPathUnits="userSpaceOnUse"><path d="M2047.5000,2046.0000 0.5000,2046.0000 0.0000,2045.5000 0.0000,1129.5000 0.3014,1128.5000 0.5000,1128.3014 4.5000,1127.6629 12.5000,1127.7419 14.5000,1127.0629 15.5000,1126.9771 23.5000,1127.0248 25.5000,1126.2945 34.5000,1126.3270 37.5000,1125.6916 45.5000,1125.6694 48.5000,1124.9845 56.5000,1125.0559 58.5000,1124.3256 67.5000,1124.3085 69.5000,1123.6351 78.5000,1123.6781 80.5000,1123.0888 88.5000,1123.0296 91.5000,1122.3994 100.5000,1122.4273 102.5000,1121.7408 111.5000,1121.7383 113.5000,1120.9850 122.5000,1121.0055 124.5000,1120.3990 132.5000,1120.3541 135.5000,1119.7379 144.5000,1119.7725 146.5000,1119.0166 155.5000,1119.0019 157.5000,1118.2969 165.5000,1118.3827 168.5000,1117.7680 176.5000,1117.7540 179.5000,1117.0288 188.5000,1117.0455 190.5000,1116.3047 198.5000,1116.3634 201.5000,1115.6823 209.5000,1115.7548 212.5000,1115.0419 220.5000,1115.0379 223.5000,1114.3356 231.5000,1114.4010 234.5000,1113.7220 242.5000,1113.7729 243.5000,1113.5895 244.5000,1113.0644 253.5000,1113.0579 256.5000,1112.3324 264.5000,1112.3287 267.5000,1111.7408 275.5000,1111.8113 276.5000,1111.6415 277.5000,1111.1347 278.5000,1111.0468 286.5000,1111.0949 288.5000,1110.3821 297.5000,1110.4175 299.5000,1109.8752 302.5000,1109.5470 302.6889,1108.5000 302.2009,1107.5000 302.1831,1106.5000 301.0983,1103.5000 300.7831,1101.5000 299.6202,1097.5000 299.4865,1095.5000 298.9913,1094.5000 298.9330,1093.5000 298.2036,1091.5000 298.0683,1089.5000 296.8369,1084.5000 295.7223,1081.5000 295.4750,1079.5000 294.2679,1076.5000 294.1938,1074.5000 293.7635,1073.5000 293.6105,1071.5000 293.1567,1070.5000 292.8448,1068.5000 292.1898,1066.5000 292.2649,1065.5000 291.6599,1063.5000 291.6039,1062.5000 291.1056,1061.5000 290.7376,1059.5000 290.2736,1058.5000 290.2520,1057.5000 289.5265,1054.5000 289.0424,1053.5000 288.8354,1051.5000 287.9636,1049.5000 287.5849,1047.5000 284.9712,1038.5000 284.9587,1037.5000 283.7017,1033.5000 283.6137,1031.5000 282.3646,1027.5000 282.2605,1025.5000 281.0256,1021.5000 280.9874,1020.5000 279.8528,1016.5000 279.5938,1014.5000 279.0794,1013.5000 279.0086,1012.5000 278.2874,1010.5000 278.2768,1009.5000 277.0357,1005.5000 277.0036,1004.5000 276.3197,1002.5000 276.2711,1001.5000 275.8097,1000.5000 275.6983,998.5000 271.8014,983.5000 271.0473,981.5000 271.0088,980.5000 270.2711,978.5000 270.3134,977.5000 269.7673,975.5000 269.6656,973.5000 269.1149,972.5000 269.0230,970.5000 267.6511,965.5000 265.8562,960.5000 265.7463,959.5000 265.0327,957.5000 264.9576,955.5000 264.3055,953.5000 264.3757,952.5000 263.9259,951.5000 263.6700,949.5000 263.1262,948.5000 263.0194,946.5000 261.2185,941.5000 260.6266,938.5000 259.7850,936.5000 259.7056,934.5000 259.0123,932.5000 259.0845,931.5000 258.3664,929.5000 258.2504,927.5000 257.0766,923.5000 256.9796,921.5000 256.4585,920.5000 256.3297,918.5000 253.1679,906.5000 252.8273,904.5000 252.3872,903.5000 252.2147,901.5000 250.0559,894.5000 249.7009,892.5000 249.1633,891.5000 249.0678,889.5000 248.3698,887.5000 248.4330,886.5000 247.8122,884.5000 247.8596,882.5000 247.1465,880.5000 247.1206,879.5000 246.4238,878.5000 245.5000,877.7398 236.5000,870.9165 235.5000,869.9421 228.5000,865.0149 224.5000,861.0186 222.5000,859.6447 219.3286,856.5000 217.6673,855.5000 211.5000,849.2677 208.5000,846.9730 203.5000,841.9427 201.5000,840.6519 190.3624,829.5000 186.7293,826.5000 182.7512,822.5000 181.3274,820.5000 178.5000,817.6225 176.5000,816.2603 174.5000,814.2621 171.5000,811.9665 160.5000,801.0020 158.5000,799.5632 154.3962,795.5000 151.5000,793.2850 150.5000,792.2501 148.5000,790.9780 144.7628,787.5000 144.0449,786.5000 140.5000,783.0201 136.5000,780.2986 135.5000,779.2694 134.5000,778.8635 132.5000,777.0152 128.5000,773.8107 127.5000,773.2445 125.5000,771.3493 123.5000,769.9752 118.5000,767.1156 117.5000,766.9217 114.5000,765.4997 106.5000,762.3980 104.5000,761.5391 103.0301,760.5000 102.2808,759.5000 102.2510,756.5000 102.4912,755.5000 105.3777,750.5000 107.0462,745.5000 108.6027,742.5000 113.6181,737.5000 114.5000,736.7193 115.5000,736.2266 118.5000,732.9641 122.5000,729.2806 124.5000,727.8658 126.5000,726.0117 127.5000,725.5862 129.5000,723.7005 131.5000,722.2156 137.5000,718.8396 140.5000,716.7473 142.7417,715.5000 155.7225,709.5000 156.7057,708.5000 156.9121,707.5000 156.7623,705.5000 157.4553,703.5000 157.4123,702.5000 159.6689,696.5000 161.6332,693.5000 163.5000,691.5780 164.5000,690.8706 167.5000,689.6860 171.5000,688.6385 174.5231,687.5000 218.9352,676.5000 221.5000,675.4932 225.5000,674.7383 227.5000,674.0052 229.5000,674.0645 233.5000,672.8582 235.5000,672.6073 236.5000,672.0782 237.5000,672.0440 239.5000,671.3169 240.5000,671.3058 243.5000,670.2415 245.5000,670.0859 249.5000,668.8662 251.5000,668.7422 253.5000,668.1084 256.5000,668.0868 260.5000,669.0934 264.5000,671.1141 266.5000,671.6934 268.5000,673.0599 269.5000,673.3955 270.5000,672.9698 272.5000,671.5335 274.3070,669.5000 277.5000,667.2127 280.3152,664.5000 281.8573,663.5000 290.9248,654.5000 293.5000,652.5718 295.5521,650.5000 297.5000,649.1145 300.2577,646.5000 301.5000,645.9022 305.5000,641.9254 307.5000,640.5649 310.5079,637.5000 317.5000,631.8749 319.8738,629.5000 322.5000,627.4784 325.5000,624.6395 327.1819,623.5000 328.5000,621.9102 331.5000,619.7046 334.5000,618.0757 335.5000,617.2502 344.5000,614.1797 346.5000,613.6977 347.5000,613.1704 355.5000,611.1214 357.5000,610.2708 358.5000,610.2551 361.5000,609.5212 365.5000,608.2295 375.5000,605.7910 377.5000,604.9421 382.5000,603.7019 383.5000,603.1935 385.5000,602.8785 390.5000,601.0380 392.5000,600.7898 393.5000,600.2219 412.5000,595.1829 414.5000,594.3261 415.5000,594.2900 418.5000,593.2619 421.5000,592.6798 423.5000,591.8535 430.5000,589.7538 431.5000,589.7294 433.5000,588.9437 438.5000,587.6691 439.5000,587.1428 441.5000,586.8041 442.5000,586.3432 443.5000,586.3238 445.6193,585.5000 449.5000,584.6562 451.5000,583.8053 453.5000,583.5192 454.5000,583.0415 455.5000,583.0215 457.5000,582.2257 459.5000,581.7781 460.5000,581.2167 462.5000,581.0009 464.5000,580.3232 465.5000,580.5039 466.5000,580.2336 471.5000,578.4590 473.5000,577.9846 475.5000,577.1167 477.5000,576.8649 478.5000,576.3039 485.5000,574.5730 495.5000,571.1309 496.5000,571.1372 497.3970,570.5000 497.5001,569.5000 496.2509,567.5000 495.8172,565.5000 494.1280,561.5000 493.2186,558.5000 492.1827,556.5000 491.9563,555.5000 492.1482,552.5000 494.8488,549.5000 497.5000,547.3663 498.8947,545.5000 502.8489,541.5000 505.4609,539.5000 506.8998,537.5000 516.5000,527.8439 519.5000,526.2616 527.5000,524.2020 530.5000,523.8072 531.5000,523.2538 536.5000,522.6727 538.5000,521.9172 539.5000,521.9561 541.5000,521.3119 543.5000,521.1896 544.5000,520.7296 546.5000,520.5497 548.5000,519.9706 549.5000,519.9883 551.5000,519.2453 556.5000,518.6547 557.5000,518.1737 559.5000,517.8296 560.5000,517.3016 562.5000,517.1972 564.5000,516.6277 566.5000,516.5123 568.5000,515.9866 574.5000,515.9578 575.5000,516.0914 576.5000,516.5983 578.5000,516.5353 580.5000,517.2317 583.5000,517.4055 584.5000,517.9345 586.5000,518.0918 590.5000,519.1656 592.5000,519.3212 593.5000,519.8724 595.5000,520.0010 599.5000,521.1036 601.5000,521.2402 603.5000,522.0091 604.5000,521.9692 606.5000,522.5808 608.5000,522.7080 612.5000,523.9578 613.5000,523.9653 617.5000,525.1797 619.5000,525.4524 622.5000,526.6692 626.8856,530.5000 632.0367,539.5000 639.8390,550.5000 640.9561,553.5000 640.8849,554.5000 639.5000,559.9359 638.2029,563.5000 638.3195,564.5000 639.5000,565.2143 641.5000,565.7941 665.5000,565.8130 668.5000,566.4593 685.5000,566.4497 688.5000,567.1363 701.5000,567.1326 704.5000,567.8358 721.5000,567.8405 724.5000,568.4816 729.5000,568.5107 731.5000,569.0443 734.5000,570.1113 737.5000,571.6090 741.5000,573.1635 743.5000,574.2572 745.5000,574.8726 751.5000,577.9631 753.5000,578.5321 755.5000,579.6646 759.5000,581.1896 767.5000,584.9444 769.4691,585.5000 778.5000,590.0901 780.0649,590.5000 781.8559,591.5000 783.5000,591.9510 798.5000,599.4258 800.5000,600.0006 807.1504,603.5000 811.5000,605.1691 812.5000,605.7886 814.5000,606.3487 821.5000,610.0006 823.5000,610.5631 835.5000,616.6300 837.5000,617.1453 846.5000,621.8383 848.5000,622.4231 850.5398,623.5000 852.5000,624.1527 875.3793,634.5000 878.5000,636.5501 882.5000,638.4479 884.6464,640.5000 886.7452,643.5000 888.4227,648.5000 889.1104,649.5000 889.3376,651.5000 890.5000,653.1014 891.7625,655.5000 892.1859,657.5000 892.9021,658.5000 894.8223,664.5000 895.8946,666.5000 897.3949,670.5000 899.5933,674.5000 899.8519,676.5000 900.9361,678.5000 901.3805,680.5000 902.5000,682.5088 903.5000,683.6237 906.5000,683.1008 908.5000,682.2846 914.5000,680.8537 917.5000,680.7722 919.5000,680.0064 928.5000,680.0405 931.5000,680.7548 944.5000,680.7430 947.5000,681.3463 961.5000,681.3029 964.5000,682.0076 973.5000,681.9981 975.5000,682.7488 982.5000,682.6628 985.5000,683.2853 988.5000,683.3286 990.5000,683.9559 992.5000,684.1201 996.5000,685.8139 998.5000,686.3494 1004.5000,689.5651 1006.5000,690.1570 1009.5000,691.6496 1017.5000,699.6249 1018.5229,701.5000 1020.5000,704.1776 1021.5000,704.6239 1031.5000,704.7076 1033.5000,705.7305 1035.2516,707.5000 1035.2497,708.5000 1034.6812,709.5000 1034.8478,711.5000 1034.0696,713.5000 1034.0544,714.5000 1032.8057,718.5000 1032.7355,720.5000 1032.0521,722.5000 1032.2047,724.5000 1033.0816,726.5000 1033.5000,726.8271 1035.5000,726.4114 1038.5000,726.5347 1040.5000,725.8357 1043.5000,725.8841 1045.5000,725.1661 1049.5000,725.1493 1052.5000,724.5236 1054.5000,724.5787 1061.5000,723.1655 1063.5000,723.2179 1065.5000,722.5154 1067.5000,722.6069 1070.5000,721.9073 1073.5000,721.8127 1074.5000,721.2889 1075.5000,721.1518 1078.5000,721.1754 1080.5000,720.5214 1084.5000,720.5973 1086.5000,719.9616 1089.5000,719.8394 1091.5000,719.2090 1093.5000,719.1659 1095.5000,718.5996 1097.5000,718.5107 1099.5000,717.9129 1101.5000,717.8650 1105.5000,716.6055 1124.4853,697.5000 1125.8959,695.5000 1131.9267,689.5000 1134.5000,686.1495 1138.8034,680.5000 1140.6360,677.5000 1143.9042,673.5000 1144.5000,672.3269 1146.0682,670.5000 1147.3205,668.5000 1154.9036,658.5000 1166.7159,641.5000 1174.7876,630.5000 1175.2233,629.5000 1177.9532,625.5000 1178.9389,624.5000 1189.3348,609.5000 1190.5000,608.2509 1193.5823,603.5000 1198.5000,596.8573 1200.5000,593.6306 1201.6224,592.5000 1204.9276,587.5000 1206.5780,585.5000 1207.0078,584.5000 1208.5000,582.3536 1218.2864,572.5000 1218.8335,571.5000 1220.5000,569.6549 1238.5000,551.6732 1239.9836,549.5000 1244.5000,545.0159 1258.5000,535.8645 1275.5000,524.3116 1278.5000,522.4076 1279.5000,521.9380 1280.5000,521.9283 1281.5000,521.3942 1283.5000,521.2200 1293.5000,518.6784 1295.3750,518.5000 1296.5000,517.9829 1297.5000,517.9659 1298.5720,517.5000 1300.5000,517.2146 1304.5000,515.9825 1306.5000,515.8692 1315.5000,513.4623 1317.5000,513.3014 1320.5000,512.5647 1321.5000,512.0609 1323.5000,511.8195 1324.5000,511.3216 1325.5000,511.3063 1326.5000,510.8684 1328.5000,510.6820 1338.5000,508.0439 1340.5000,507.9177 1341.5000,507.3961 1342.5000,507.3239 1344.5000,506.7086 1345.5000,506.6912 1347.5000,505.9606 1348.5000,505.9747 1358.5000,503.4187 1359.5000,503.4032 1361.5000,502.7683 1362.5000,502.7563 1364.5000,502.0285 1365.5000,501.9969 1366.5000,501.4899 1368.5000,501.2220 1369.5000,500.7602 1371.5000,500.5750 1380.5000,498.2577 1382.5000,498.0668 1384.5000,497.3224 1385.5000,497.2982 1389.5000,496.0474 1390.5000,496.0369 1392.5000,495.3075 1393.5000,495.3512 1403.5000,492.8482 1405.5000,492.6645 1406.5000,492.1321 1408.5000,491.8941 1409.5000,491.4118 1410.5000,491.3940 1411.5000,490.9604 1413.5000,490.7000 1414.5000,490.1501 1416.5000,489.9989 1426.5000,487.4138 1427.5000,487.4585 1429.5000,486.7813 1430.5000,486.7682 1431.5000,486.2995 1433.5000,485.9451 1434.5000,485.4435 1435.5000,485.3873 1437.5000,484.7332 1438.5000,484.7747 1448.5000,482.2383 1450.5000,482.0845 1451.5000,481.5963 1453.5000,481.3166 1454.5000,480.8460 1456.5000,480.9003 1458.5000,480.1150 1460.5000,480.0226 1462.5000,479.4533 1463.5000,479.4996 1464.5000,479.0480 1467.5000,478.6358 1468.5000,478.2028 1470.5000,478.1210 1472.5000,477.5267 1474.5000,477.3997 1475.5000,476.9418 1477.5000,476.7657 1479.5000,476.1128 1481.5000,476.0685 1483.5000,475.4742 1484.5000,475.5151 1486.5000,474.8160 1488.5000,474.7110 1490.5000,474.0884 1491.5000,474.1366 1493.5000,473.5983 1495.5000,473.4521 1497.5000,472.7606 1498.5000,472.8031 1500.5000,472.1549 1502.5000,472.1111 1504.5000,471.5741 1506.5000,471.3551 1507.5000,470.9006 1509.5000,470.8043 1511.5000,470.1434 1513.5000,470.0683 1515.5000,469.5050 1516.5000,469.5376 1518.5000,468.8173 1519.5000,468.8528 1521.5000,468.2567 1524.5000,468.1726 1526.5000,467.4558 1529.5000,467.5660 1531.5000,466.8922 1534.5000,466.8166 1536.5000,466.2178 1539.5000,466.1545 1542.5000,465.4657 1544.5000,465.5315 1547.5000,464.8458 1550.5000,464.7799 1552.5000,464.1780 1555.5000,464.0978 1557.5000,463.4369 1560.5000,463.5352 1562.5000,462.8357 1565.5000,462.8839 1566.5000,462.6840 1567.5000,462.1538 1570.5000,462.1896 1573.5000,461.4404 1575.5000,461.4798 1578.5000,460.8397 1580.5000,460.8973 1583.5000,460.1652 1586.5000,460.1133 1588.5000,459.5815 1591.5000,459.5039 1593.5000,458.9525 1596.5000,458.8933 1598.5000,458.1367 1601.5000,458.2404 1603.5000,457.5454 1606.5000,457.5935 1607.5000,457.4340 1608.5000,456.9592 1612.5000,456.8597 1613.5000,456.3159 1616.5000,456.1794 1617.5000,456.3164 1619.5000,458.1321 1621.5000,460.8791 1634.1503,473.5000 1636.5000,476.4555 1648.5583,488.5000 1650.8094,491.5000 1663.5000,504.1650 1665.1530,506.5000 1678.1470,519.5000 1679.5976,521.5000 1681.4520,523.5000 1690.5000,532.5380 1692.5000,533.9590 1696.5000,533.9731 1699.5000,534.6296 1758.5000,534.6020 1761.5000,535.2491 1778.5000,535.2489 1780.0761,537.5000 1783.5000,544.4090 1784.3595,545.5000 1785.5000,547.6301 1791.3169,559.5000 1792.2084,560.5000 1793.5000,562.9070 1798.1164,572.5000 1800.1080,575.5000 1805.9626,587.5000 1807.8838,590.5000 1812.8264,600.5000 1815.2059,604.5000 1820.6464,615.5000 1823.0426,619.5000 1827.0386,627.5000 1830.7880,633.5000 1831.1381,634.5000 1833.5000,637.7347 1836.5000,643.0927 1837.5992,644.5000 1839.1608,647.5000 1841.2259,650.5000 1843.4316,654.5000 1846.5000,659.0177 1847.1709,660.5000 1848.0414,661.5000 1849.5000,664.1935 1850.5000,665.1517 1853.5000,667.0986 1873.5000,676.9518 1877.5000,679.3523 1883.8971,682.5000 1884.7108,683.5000 1886.6862,687.5000 1887.1325,689.5000 1887.8618,690.5000 1888.3097,692.5000 1888.9871,693.5000 1889.6088,695.5000 1890.7090,697.5000 1891.1601,699.5000 1891.8621,700.5000 1892.2801,702.5000 1892.9781,703.5000 1893.5700,705.5000 1894.6719,707.5000 1895.1390,709.5000 1895.8648,710.5000 1896.2995,712.5000 1896.9760,713.5000 1897.5770,715.5000 1898.6924,717.5000 1899.1675,719.5000 1899.8742,720.5000 1900.3108,722.5000 1901.5000,724.5547 1916.1763,761.5000 1921.6143,771.5000 1922.5000,772.5552 1924.8232,776.5000 1925.6948,778.5000 1927.7012,781.5000 1928.0625,782.5000 1928.9013,783.5000 1930.9344,787.5000 1931.8038,788.5000 1932.5000,790.0509 1934.1479,792.5000 1935.0542,794.5000 1936.9755,797.5000 1937.3526,798.5000 1938.5000,800.0075 1940.2410,803.5000 1941.1058,804.5000 1943.5000,808.5056 1944.3469,810.5000 1947.6051,815.5000 1949.5939,819.5000 1953.2584,824.5000 1956.6739,828.5000 1957.9305,830.5000 1959.5000,832.1561 1960.2973,833.5000 1962.2132,835.5000 1965.0239,839.5000 1971.6144,847.5000 1972.0317,848.5000 1973.9221,850.5000 1975.3008,852.5000 1976.5000,853.7169 1977.6119,855.5000 1984.1246,863.5000 1986.9445,867.5000 1988.5000,869.0454 1989.4206,870.5000 1991.2945,872.5000 1994.0748,876.5000 1998.0083,880.5000 1999.3219,882.5000 2002.2538,885.5000 2003.6887,887.5000 2007.5000,891.3988 2008.0156,892.5000 2011.5000,896.0152 2013.2732,898.5000 2016.5000,901.6921 2018.6432,904.5000 2021.6420,907.5000 2023.0058,909.5000 2025.9949,912.5000 2028.2839,915.5000 2030.5000,917.7016 2032.5000,920.2875 2035.5920,923.5000 2037.0099,925.5000 2040.5000,929.0728 2041.5000,930.6414 2044.5000,933.6449 2046.5000,936.3463 2047.6560,937.5000 2047.9949,938.5000 2048.0000,2045.5000Z M1341.4918,850.5000 1363.5000,828.4457 1365.5000,827.0645 1368.5000,824.1516 1431.1064,761.5000 1432.5192,759.5000 1438.5000,753.4827 1440.7876,750.5000 1447.7831,743.5000 1449.1486,741.5000 1456.1433,734.5000 1457.4024,732.5000 1460.5000,729.4704 1459.5000,728.7670 1457.5000,729.7173 1455.5000,730.1752 1453.5000,731.0051 1448.5000,732.3385 1442.5000,734.4561 1441.5000,734.4961 1438.5000,735.4588 1436.5000,736.4908 1432.5000,739.6530 1430.5000,741.5402 1429.5000,741.9760 1424.2064,746.5000 1422.5000,747.5578 1417.5000,751.9093 1415.5000,753.1819 1410.5000,757.5524 1409.5000,757.9802 1404.1974,762.5000 1402.5033,763.5000 1320.4168,845.5000 1320.1506,846.5000 1322.5000,847.6453 1324.5000,848.1111 1327.5000,849.2134 1329.5000,849.3236 1332.5000,850.0654 1334.5000,849.9707 1336.5000,850.7556 1338.5000,850.6952 1340.5000,851.2150Z M888.7647,1074.5000 891.5000,1073.8827 899.5000,1073.8742 902.5000,1073.1722 910.5000,1073.2482 912.5000,1072.6022 913.5000,1072.5351 921.5000,1072.5922 923.5000,1071.8487 932.5000,1071.8904 935.5000,1071.1640 943.5000,1071.1382 946.5000,1070.5338 954.5000,1070.6236 956.5000,1069.8980 965.5000,1069.9015 967.5000,1069.1365 976.5000,1069.1706 979.5000,1068.5406 987.5000,1068.4756 988.5000,1067.9799 988.8267,1067.5000 989.3616,1065.5000 991.9980,1062.5000 992.5000,1062.1073 995.5000,1061.1137 997.5000,1061.8900 1000.5000,1062.0326 1001.5000,1062.5270 1002.5000,1062.6750 1003.5000,1062.4865 1005.5000,1063.1823 1007.5000,1063.1741 1008.5000,1063.3368 1009.5000,1063.8730 1011.5000,1063.8418 1013.5000,1064.5799 1015.5000,1064.5599 1018.5000,1065.2952 1019.5000,1065.1440 1021.5000,1065.9127 1022.5000,1065.9444 1030.5000,1065.9433 1033.5000,1065.2244 1042.5000,1065.2589 1044.5000,1064.5842 1052.5000,1064.6436 1055.5000,1063.8814 1063.5000,1063.9469 1066.5000,1063.2304 1074.5000,1063.2263 1077.5000,1062.5673 1078.5000,1062.6261 1079.5000,1062.1628 1079.9340,1061.5000 1079.9802,1060.5000 1079.9965,1053.5000 1079.1802,1050.5000 1079.2440,1043.5000 1079.9620,1041.5000 1079.8714,993.5000 1080.5400,991.5000 1080.5800,988.5000 1081.3119,986.5000 1081.1428,984.5000 1081.9618,981.5000 1081.9711,977.5000 1082.4403,976.5000 1082.6071,974.5000 1083.5000,971.5877 1085.3504,966.5000 1084.7387,964.5000 1083.2979,962.5000 1080.3890,956.5000 1078.7930,953.5000 1077.9730,952.5000 1075.3963,947.5000 1075.4049,946.5000 1075.9432,945.5000 1076.8219,942.5000 1077.8569,940.5000 1079.5000,935.0885 1081.5000,930.2481 1082.2691,927.5000 1082.9600,926.5000 1086.1313,918.5000 1086.8089,917.5000 1087.2858,915.5000 1088.8586,912.5000 1091.1512,906.5000 1092.2712,904.5000 1093.1237,903.5000 1093.4987,902.5000 1092.5000,901.7812 1090.5000,902.4941 1086.5000,902.5616 1084.5000,903.2018 1080.5000,903.0945 1078.5000,903.8473 1073.5000,903.8464 1070.5000,904.5126 1065.5000,904.4752 1063.5000,905.1704 1060.5000,905.1704 1058.5000,904.4894 1053.5000,904.4949 1051.5000,903.8299 1046.5000,903.8370 1044.5000,903.2299 1040.5000,903.1669 1037.5000,902.5153 1035.5000,902.5790 1034.5000,902.3518 1033.5000,901.6001 1030.1162,897.5000 1028.7544,895.5000 1024.3626,890.5000 1023.0455,888.5000 1021.1243,886.5000 1018.8455,879.5000 1017.1653,875.5000 1015.2776,869.5000 1012.9184,863.5000 1012.8278,857.5000 1012.1119,855.5000 1012.1566,851.5000 1013.1110,849.5000 1013.9646,848.5000 1014.5000,847.2230 1017.6098,842.5000 1017.4442,841.5000 1013.3580,841.5000 1012.3796,842.5000 1011.2591,845.5000 1010.5000,846.2878 1007.5000,847.4532 1003.5000,846.7673 964.5000,846.7834 961.5000,846.0560 952.5000,846.0604 950.5000,845.3487 945.5000,845.4192 943.5000,846.0181 941.5000,846.0916 940.5000,846.0468 938.5000,845.3481 928.5000,845.3864 925.5000,844.7443 915.5000,844.7156 914.6452,845.5000 914.5126,847.5000 914.0123,848.5000 913.8332,849.5000 913.9553,852.5000 912.5916,857.5000 912.4345,859.5000 911.9783,860.5000 911.8569,863.5000 911.1510,865.5000 911.3077,866.5000 910.6795,868.5000 910.5125,871.5000 910.0141,872.5000 909.8360,873.5000 909.9493,875.5000 909.2347,877.5000 909.1653,886.5000 907.7890,891.5000 907.2901,892.5000 907.3132,894.5000 906.6460,896.5000 906.5948,900.5000 905.8628,902.5000 905.9666,905.5000 905.2130,907.5000 905.1889,908.5000 903.9484,912.5000 903.9739,914.5000 903.7982,915.5000 903.2535,916.5000 903.1695,920.5000 902.5509,922.5000 902.6489,924.5000 901.9565,926.5000 901.9853,928.5000 901.2495,930.5000 901.1930,932.5000 899.9760,936.5000 899.9624,937.5000 899.1786,939.5000 899.3662,941.5000 898.7483,943.5000 898.5602,946.5000 897.8801,948.5000 898.0425,950.5000 897.2531,952.5000 897.2839,958.5000 896.6182,960.5000 896.6971,961.5000 896.0323,963.5000 895.9673,965.5000 894.7050,969.5000 894.5000,971.1666 893.9279,972.5000 894.0153,975.5000 893.2947,977.5000 893.2063,979.5000 892.0434,983.5000 892.0009,986.5000 891.2352,988.5000 891.3396,991.5000 890.7199,993.5000 890.7037,996.5000 889.9958,998.5000 889.9408,1001.5000 889.4059,1002.5000 889.1631,1004.5000 888.6995,1005.5000 888.5800,1007.5000 888.1189,1008.5000 888.0481,1011.5000 887.8524,1012.5000 887.3199,1013.5000 887.4082,1015.5000 886.7057,1017.5000 886.6906,1020.5000 885.9777,1022.5000 886.0799,1024.5000 885.9048,1025.5000 885.3845,1026.5000 885.2466,1029.5000 884.5893,1031.5000 884.7596,1032.5000 884.5685,1033.5000 884.0601,1034.5000 883.9395,1037.5000 883.2288,1039.5000 883.3986,1040.5000 882.7522,1042.5000 882.6682,1044.5000 881.2450,1049.5000 881.3387,1051.5000 880.6574,1053.5000 880.7458,1059.5000 880.0069,1061.5000 879.9241,1063.5000 879.2812,1065.5000 879.4458,1066.5000 878.5000,1070.3790 877.2594,1073.5000 877.0768,1074.5000 877.5000,1075.0093 878.5000,1075.0861 879.5000,1074.5099Z M1196.1497,1012.5000 1202.9280,1004.5000 1203.5483,1003.5000 1203.1672,1002.5000 1199.4390,1001.5000 1197.4004,1005.5000 1194.7098,1012.5000 1195.5000,1013.1565Z M1194.7010,1013.5000 1194.5000,1013.1685 1194.3421,1013.5000 1194.5000,1013.8717Z M1327.8174,1047.5000 1328.5000,1047.2479 1337.5000,1047.2637 1340.5000,1046.6222 1348.5000,1046.5835 1350.5000,1046.0222 1353.5000,1046.0141 1354.7715,1045.5000 1353.9414,1044.5000 1350.5000,1042.0969 1349.5000,1041.6620 1346.5000,1039.3927 1343.5000,1037.9871 1341.5000,1036.6669 1336.5000,1034.0176 1335.5000,1033.8752 1323.9016,1045.5000 1323.2494,1046.5000 1322.9674,1047.5000 1323.5000,1047.9757 1326.5000,1048.0159Z" clip-rule="evenodd"/></clipPath></defs><g clip-path="url(#f2-detail-circle)"><rect width="2048" height="2046" fill="#1b2230"/><image href="media/figure2/display/forecast-detail.webp" width="2048" height="2046" preserveAspectRatio="none" clip-path="url(#f2-detail-foreground)"/></g></svg>
+</div>
+</div>
+<svg class="f2-full f2-motion-arrow" viewBox="0 0 821.990551 461.990551" aria-hidden="true"><path class="f2-trajectory-line" d="M 742.156585 287.425703 L 739.519866 285.160076 L 736.855802 282.949139 L 734.105801 280.792887 L 731.328456 278.726480 L 728.492516 276.683510 L 725.601890 274.757729 L 722.683920 272.886634 L 719.734700 271.070226 L 716.699543 269.371007 L 713.668292 267.699132 L 710.578447 266.081943 L 707.488601 264.581942 L 704.312818 263.163973 L 701.140942 261.831941 L 697.933909 260.527253 L 694.703439 259.335846 L 691.445625 258.230377 L 688.183904 257.183502 L 684.898747 256.246001 L 681.551089 255.367094 L 678.234681 254.574125 L 674.890930 253.894438 L 671.519835 253.242094 L 668.172177 252.703031 L 664.801082 252.249906 L 661.426081 251.910062 L 658.054985 251.624905 L 654.652640 251.429593 L 651.277639 251.316311 L 647.933886 251.285061 L 644.558885 251.343655 L 641.215134 251.484280 L 637.844038 251.710842 L 634.527631 252.023343 L 631.211223 252.421780 L 628.375284 252.843656" pathLength="1" fill="none" stroke="#ff0000" stroke-width="1.50233" stroke-linecap="butt"/><g class="f2-trajectory-tip"><path d="M 618.113281 254.832031 L 626.417969 249.699219 L 628.402344 250.464844 L 624.351562 252.875 L 628.6875 252.050781 L 628.972656 253.496094 L 624.632812 254.347656 L 629.28125 255.085938 L 627.75 256.503906 Z M 618.113281 254.832031 " fill="#ff0000" fill-rule="evenodd"/></g></svg>
+</div>
+          </div></div></div>
+          <dialog class="f2-dialog" aria-label="Expanded Figure 2"><div class="f2-dialog-toolbar"><span>Gaze2HOI · Figure 2</span><button class="f2-close" type="button" aria-label="Close expanded diagram">Close <span aria-hidden="true">×</span></button></div><div class="f2-dialog-body"></div><p class="f2-dialog-hint">Scroll to explore the complete diagram.</p></dialog>
+        </div>
+        <div class="concept-flow">
+          <div class="concept concept-blue"><span class="step-label">01 / Intention</span><h3>What to do next?</h3><p>Infer structured intentions for each hand from observations and gaze.</p></div>
+          <div class="concept concept-green"><span class="step-label">02 / Contact</span><h3>Where to make contact?</h3><p>Localize likely contact regions using object geometry and the interaction history.</p></div>
+          <div class="concept concept-orange"><span class="step-label">03 / Motion</span><h3>How will it unfold?</h3><p>Jointly forecast 3D articulated motion of both hands and 6-DoF object trajectories.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="egoaim" class="section-space section-tinted" aria-labelledby="dataset-title">
+      <div class="section-wrap">
+        <div class="section-heading heading-inline"><div><p class="eyebrow">EGOAIM BENCHMARK</p><h2 id="dataset-title">One benchmark.<br>Four interaction phases.</h2></div><p>Fine-grained future intentions paired with<br>continuous 3D hand-object motion.</p></div>
+        <div class="dataset-numbers"><div><strong>7,429</strong><span>Forecasting windows</span></div><div><strong>33</strong><span>Object instances</span></div><div><strong>9,038</strong><span>Non-null per-hand intentions</span></div><div><strong>30 + 30</strong><span>Observed + future frames at 30 fps</span></div></div>
+        <figure class="paper-figure dataset-figure"><a href="media/figure3/figure3-dark.svg" target="_blank" rel="noopener" aria-label="Open the EgoAIM dataset overview"><object class="f3-artwork" data="media/figure3/figure3-dark.svg" type="image/svg+xml" role="img" aria-label="EgoAIM dataset overview and structured hand-object intention annotations" tabindex="-1"><img src="media/figure3/figure3-dark.svg" alt="EgoAIM dataset overview and structured hand-object intention annotations." loading="lazy" width="1800" height="1652"></object></a><figcaption>Built on HOT3D-Aria recordings, EgoAIM pairs intention annotations with continuous hand-object motion. Training, validation, and test splits contain 5,132, 976, and 1,321 windows.</figcaption></figure>
+        <div class="phase-list"><div><span>01</span><h3>Establish Contact</h3><p>Reach toward the intended object and part.</p></div><div><span>02</span><h3>Move</h3><p>Transport the object toward a target.</p></div><div><span>03</span><h3>Manipulate</h3><p>Articulate the hand for the ongoing action.</p></div><div><span>04</span><h3>Put Down</h3><p>Place the object on a supporting surface.</p></div></div>
+      </div>
+    </section>
+
+    <section id="method" class="section-space section-tinted" aria-labelledby="method-title">
+      <div class="section-wrap">
+        <div class="section-heading heading-inline"><div><p class="eyebrow">Gaze2HOI framework</p><h2 id="method-title">From gaze to interaction.</h2></div><p>Semantic and geometric disambiguation<br>for coordinated motion forecasting.</p></div>
+        <figure class="paper-figure framework-figure">
+          <a class="f4-link" href="media/figure4/paper-white/figure4-full.webp" target="_blank" rel="noopener" aria-label="Open the original white-background paper framework figure at full resolution">
+            <img src="media/figure4/static-gray-balanced/figure4-display.webp" alt="Gaze2HOI: Gaze-Aware Intention Disambiguation and HOI Forecasting. Complete framework overview above the original three architecture panels: gaze-aware vision-language model, anticipatory contact grounding, and conditional motion diffusion." loading="lazy" decoding="async" width="2480" height="1463">
+          </a>
+        </figure>
+        <div class="method-notes">
+          <article class="method-note concept-blue"><span class="step-label">Gaze-Aware Vision-Language Model</span><h3>Reading the gaze.</h3><p>Temporal Gaze Saliency Modulation (TGSM) integrates current and historical gaze into VLM visual features to infer the structured future intention for each hand.</p></article>
+          <article class="method-note concept-green"><span class="step-label">Anticipatory contact grounding</span><h3>Finding the contact.</h3><p>Anticipatory Contact Grounding (ACG) combines contact priors with observed interactions and hand trajectories to predict contact fields, with support and placement fields for Put Down.</p></article>
+          <article class="method-note concept-orange"><span class="step-label">Conditional motion diffusion</span><h3>Forecasting the motion.</h3><p>A diffusion model jointly generates hand and object motion under semantic and geometric conditions, while retaining the&nbsp;observed&nbsp;history.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="section-wrap section-space" aria-labelledby="results-title">
+      <div class="section-heading heading-inline"><div><p class="eyebrow">Experimental results</p><h2 id="results-title">Better intentions.<br>More accurate interactions.</h2></div><p>Evaluation on the EgoAIM test set.<br>See the paper for the complete protocol.</p></div>
+      <div class="result-highlights"><div><span class="metric-category">Intention inference</span><strong>82.29<span>%</span></strong><p>Sample EM@100px</p><small>+9.62 percentage points over No Gaze</small></div><div><span class="metric-category">Hand motion</span><strong>4.16<span>cm</span></strong><p>Hand average displacement error</p><small>Valid future wrist positions</small></div><div><span class="metric-category">Establish contact</span><strong>92.43<span>%</span></strong><p>Reach success rate</p><small>On the Establish Contact subset</small></div></div>
+      <div class="qualitative-heading"><h3 id="qualitative-title" class="eyebrow">Qualitative Results</h3></div>
+      <div class="f5-player" id="qualitative-player" role="region" aria-labelledby="qualitative-title" aria-describedby="f5-instructions f5-output-note" data-sample="0">
+        <p id="f5-instructions" class="sr-only">Select a sample row to play its observation and forecast. The selected row plays all methods together, then advances to the next sample. Use the arrow keys to change samples.</p>
+        <div class="f5-scroll" tabindex="0" aria-label="Comparison figure; scroll horizontally on small screens">
+          <div class="f5-board">
+            <div class="f5-head">
+              <span class="f5-heading f5-heading-observed">Observations</span>
+              <span class="f5-heading f5-heading-gt">GT</span>
+              <span class="f5-heading f5-heading-objectforesight">ObjectForesight</span>
+              <span class="f5-heading f5-heading-cahmp">CAHMP</span>
+              <span class="f5-heading f5-heading-transformer">Transformer</span>
+              <span class="f5-heading f5-heading-ours">Ours</span>
+            </div>
+            <div class="f5-rows">
+              <div class="f5-highlight" aria-hidden="true"></div>
+              <div class="f5-row" id="f5-row-0" data-f5-row="0" data-active="true" data-ready="false" role="button" tabindex="0" aria-label="Play sample 1, test example" aria-pressed="true">
+                <div class="f5-cell f5-cell-observed">
+                  <img class="f5-poster" src="media/figure5/replay/sample-1/observed.webp?v=alpha020" alt="Sample 1: Observations" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="observed" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-gt">
+                  <img class="f5-poster" src="media/figure5/replay/sample-1/gt.webp?v=alpha020" alt="Sample 1: GT" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="gt" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-objectforesight">
+                  <img class="f5-poster" src="media/figure5/replay/sample-1/objectforesight.webp?v=alpha020" alt="Sample 1: ObjectForesight" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="objectforesight" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-cahmp">
+                  <img class="f5-poster" src="media/figure5/replay/sample-1/cahmp.webp?v=alpha020" alt="Sample 1: CAHMP" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="cahmp" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-transformer">
+                  <img class="f5-poster" src="media/figure5/replay/sample-1/transformer.webp?v=alpha020" alt="Sample 1: Transformer" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="transformer" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-ours">
+                  <img class="f5-poster" src="media/figure5/replay/sample-1/ours.webp?v=alpha020" alt="Sample 1: Ours" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="ours" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+              </div>
+              <div class="f5-row" id="f5-row-1" data-f5-row="1" data-active="false" data-ready="false" role="button" tabindex="0" aria-label="Play sample 2, test example" aria-pressed="false">
+                <div class="f5-cell f5-cell-observed">
+                  <img class="f5-poster" src="media/figure5/replay/sample-2/observed.webp?v=alpha020" alt="Sample 2: Observations" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="observed" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-gt">
+                  <img class="f5-poster" src="media/figure5/replay/sample-2/gt.webp?v=alpha020" alt="Sample 2: GT" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="gt" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-objectforesight">
+                  <img class="f5-poster" src="media/figure5/replay/sample-2/objectforesight.webp?v=alpha020" alt="Sample 2: ObjectForesight" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="objectforesight" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-cahmp">
+                  <img class="f5-poster" src="media/figure5/replay/sample-2/cahmp.webp?v=alpha020" alt="Sample 2: CAHMP" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="cahmp" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-transformer">
+                  <img class="f5-poster" src="media/figure5/replay/sample-2/transformer.webp?v=alpha020" alt="Sample 2: Transformer" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="transformer" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-ours">
+                  <img class="f5-poster" src="media/figure5/replay/sample-2/ours.webp?v=alpha020" alt="Sample 2: Ours" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="ours" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+              </div>
+              <div class="f5-row" id="f5-row-2" data-f5-row="2" data-active="false" data-ready="false" role="button" tabindex="0" aria-label="Play sample 3, validation example" aria-pressed="false">
+                <div class="f5-cell f5-cell-observed">
+                  <img class="f5-poster" src="media/figure5/replay/sample-3/observed.webp?v=alpha020" alt="Sample 3: Observations" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="observed" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-gt">
+                  <img class="f5-poster" src="media/figure5/replay/sample-3/gt.webp?v=alpha020" alt="Sample 3: GT" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="gt" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-objectforesight">
+                  <img class="f5-poster" src="media/figure5/replay/sample-3/objectforesight.webp?v=alpha020" alt="Sample 3: ObjectForesight" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="objectforesight" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-cahmp">
+                  <img class="f5-poster" src="media/figure5/replay/sample-3/cahmp.webp?v=alpha020" alt="Sample 3: CAHMP" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="cahmp" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-transformer">
+                  <img class="f5-poster" src="media/figure5/replay/sample-3/transformer.webp?v=alpha020" alt="Sample 3: Transformer" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="transformer" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-ours">
+                  <img class="f5-poster" src="media/figure5/replay/sample-3/ours.webp?v=alpha020" alt="Sample 3: Ours" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="ours" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+              </div>
+              <div class="f5-row" id="f5-row-3" data-f5-row="3" data-active="false" data-ready="false" role="button" tabindex="0" aria-label="Play sample 4, validation example" aria-pressed="false">
+                <div class="f5-cell f5-cell-observed">
+                  <img class="f5-poster" src="media/figure5/replay/sample-4/observed.webp?v=alpha020" alt="Sample 4: Observations" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="observed" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-gt">
+                  <img class="f5-poster" src="media/figure5/replay/sample-4/gt.webp?v=alpha020" alt="Sample 4: GT" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="gt" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-objectforesight">
+                  <img class="f5-poster" src="media/figure5/replay/sample-4/objectforesight.webp?v=alpha020" alt="Sample 4: ObjectForesight" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="objectforesight" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-cahmp">
+                  <img class="f5-poster" src="media/figure5/replay/sample-4/cahmp.webp?v=alpha020" alt="Sample 4: CAHMP" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="cahmp" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-transformer">
+                  <img class="f5-poster" src="media/figure5/replay/sample-4/transformer.webp?v=alpha020" alt="Sample 4: Transformer" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="transformer" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                <div class="f5-cell f5-cell-ours">
+                  <img class="f5-poster" src="media/figure5/replay/sample-4/ours.webp?v=alpha020" alt="Sample 4: Ours" width="768" height="768" loading="lazy" decoding="async">
+                  <video data-f5-video="ours" width="768" height="768" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p id="f5-status" class="sr-only" role="status" aria-live="polite"></p>
+      </div>
+      <noscript><style>.f5-player{display:none}</style><figure class="paper-figure comparison-figure"><a href="assets/images/qualitative.webp" target="_blank" rel="noopener"><img src="assets/images/qualitative.webp" alt="Qualitative comparisons of GT, ObjectForesight, CAHMP, Transformer and Gaze2HOI for four samples." loading="lazy" width="2400" height="1475"></a></figure></noscript>
+      <p class="f5-output-note" id="f5-output-note">The visualized results show raw model outputs, without additional temporal smoothing or trajectory refinement.</p>
+
+      <section class="failure-analysis" id="failure-analysis" aria-labelledby="failure-analysis-title">
+        <h3 class="eyebrow" id="failure-analysis-title">Failure Cases</h3>
+        <p class="sr-only" id="f8-instructions">Use the three dots or arrow keys to select a case. Observations play first, both intentions are highlighted, and ground-truth and predicted motions then play together. Prediction is in the middle and ground truth is on the right, with each intention above its motion.</p>
+        <div class="f8-player" id="failure-player" role="region" aria-labelledby="failure-analysis-title" aria-describedby="f8-instructions" data-sample="0" aria-roledescription="carousel">
+          <div class="f8-viewport">
+            <article class="f8-case" id="f8-case-0" data-case="0" data-active="true" role="group" aria-roledescription="slide" tabindex="0" aria-label="1 of 3: Purpose Confusion">
+              <div class="f8-observation-column">
+                <h4 class="f8-column-label">Observations</h4>
+                <div class="f8-cell f8-observation" data-kind="observation">
+                  <img class="f8-poster" src="assets/figure8/P0003_ebdc6ff7_001230_001289/observation.webp" alt="Egocentric observations of both hands holding a wooden bowl." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0003_ebdc6ff7_001230_001289/observation.mp4" data-webm="assets/figure8/P0003_ebdc6ff7_001230_001289/observation.webm" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+              </div>
+              <div class="f8-comparison">
+                <div class="f8-labels">
+                  <div class="f8-row-label"><span>Prediction</span><img src="assets/figure8/intention-error.webp" alt="" aria-hidden="true" width="24" height="24" loading="lazy"></div>
+                  <div class="f8-row-label"><span>Ground Truth</span><img src="assets/figure8/intention-correct.webp" alt="" aria-hidden="true" width="24" height="24" loading="lazy"></div>
+                </div>
+                <div class="f8-intentions">
+                  <div class="f8-intention-row f8-intention-row-pred">
+                    <div class="f8-intention f8-intention-pred" aria-label="Prediction intention">
+                      <div class="f8-copy">
+                        <p><span class="f8-hand f8-left">L:</span><span>Grasp, Wooden bowl, Rim<br><em>Place</em>, Dark wooden square table,<br>[567, 656]</span></p>
+                        <p><span class="f8-hand f8-right">R:</span><span>Grasp, Wooden bowl, Rim<br><em>Place</em>, Dark wooden square table,<br>[567, 656]</span></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="f8-intention-row f8-intention-row-gt">
+                    <div class="f8-intention f8-intention-gt" aria-label="Ground Truth intention">
+                      <div class="f8-copy">
+                        <p><span class="f8-hand f8-left">L:</span><span>Grasp, Wooden bowl, Rim<br><em>Shake to mix</em></span></p>
+                        <p><span class="f8-hand f8-right">R:</span><span>Grasp, Wooden bowl, Rim<br><em>Shake to mix</em></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="f8-forecasts">
+                  <div class="f8-cell" data-kind="ours">
+                  <img class="f8-poster" src="assets/figure8/P0003_ebdc6ff7_001230_001289/ours.webp?v=pagebg1" alt="Predicted future hand-object motion." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0003_ebdc6ff7_001230_001289/ours.mp4?v=pagebg1" data-webm="assets/figure8/P0003_ebdc6ff7_001230_001289/ours.webm?v=pagebg1" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                  <div class="f8-cell" data-kind="gt">
+                  <img class="f8-poster" src="assets/figure8/P0003_ebdc6ff7_001230_001289/gt.webp?v=pagebg1" alt="Ground-truth future hand-object motion." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0003_ebdc6ff7_001230_001289/gt.mp4?v=pagebg1" data-webm="assets/figure8/P0003_ebdc6ff7_001230_001289/gt.webm?v=pagebg1" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                </div>
+              </div>
+            </article>
+            <article class="f8-case" id="f8-case-1" data-case="1" data-active="false" role="group" aria-roledescription="slide" tabindex="-1" aria-label="2 of 3: Contact-Part Confusion" aria-hidden="true" inert>
+              <div class="f8-observation-column">
+                <h4 class="f8-column-label">Observations</h4>
+                <div class="f8-cell f8-observation" data-kind="observation">
+                  <img class="f8-poster" src="assets/figure8/P0011_30a5b61d_000545_000604/observation.webp" alt="Egocentric observations before reaching for a moka pot." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0011_30a5b61d_000545_000604/observation.mp4" data-webm="assets/figure8/P0011_30a5b61d_000545_000604/observation.webm" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+              </div>
+              <div class="f8-comparison">
+                <div class="f8-labels">
+                  <div class="f8-row-label"><span>Prediction</span><img src="assets/figure8/intention-error.webp" alt="" aria-hidden="true" width="24" height="24" loading="lazy"></div>
+                  <div class="f8-row-label"><span>Ground Truth</span><img src="assets/figure8/intention-correct.webp" alt="" aria-hidden="true" width="24" height="24" loading="lazy"></div>
+                </div>
+                <div class="f8-intentions">
+                  <div class="f8-intention-row f8-intention-row-pred">
+                    <div class="f8-intention f8-intention-pred" aria-label="Prediction intention">
+                      <div class="f8-copy">
+                        <p><span class="f8-hand f8-left">L:</span><span>&lt; No intention &gt;</span></p>
+                        <p><span class="f8-hand f8-right">R:</span><span>Reach and grasp,<br>Moka pot, <em>Handle</em></span></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="f8-intention-row f8-intention-row-gt">
+                    <div class="f8-intention f8-intention-gt" aria-label="Ground Truth intention">
+                      <div class="f8-copy">
+                        <p><span class="f8-hand f8-left">L:</span><span>&lt; No intention &gt;</span></p>
+                        <p><span class="f8-hand f8-right">R:</span><span>Reach and grasp,<br>Moka pot, <em>Body</em></span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="f8-forecasts">
+                  <div class="f8-cell" data-kind="ours">
+                  <img class="f8-poster" src="assets/figure8/P0011_30a5b61d_000545_000604/ours.webp?v=pagebg1" alt="Predicted future hand-object motion." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0011_30a5b61d_000545_000604/ours.mp4?v=pagebg1" data-webm="assets/figure8/P0011_30a5b61d_000545_000604/ours.webm?v=pagebg1" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                  <div class="f8-cell" data-kind="gt">
+                  <img class="f8-poster" src="assets/figure8/P0011_30a5b61d_000545_000604/gt.webp?v=pagebg1" alt="Ground-truth future hand-object motion." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0011_30a5b61d_000545_000604/gt.mp4?v=pagebg1" data-webm="assets/figure8/P0011_30a5b61d_000545_000604/gt.webm?v=pagebg1" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                </div>
+              </div>
+            </article>
+            <article class="f8-case" id="f8-case-2" data-case="2" data-active="false" role="group" aria-roledescription="slide" tabindex="-1" aria-label="3 of 3: Hand Assignment Error" aria-hidden="true" inert>
+              <div class="f8-observation-column">
+                <h4 class="f8-column-label">Observations</h4>
+                <div class="f8-cell f8-observation" data-kind="observation">
+                  <img class="f8-poster" src="assets/figure8/P0001_83b755aa_000125_000184/observation.webp" alt="Egocentric observations before reaching for eyeglasses." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0001_83b755aa_000125_000184/observation.mp4" data-webm="assets/figure8/P0001_83b755aa_000125_000184/observation.webm" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+              </div>
+              <div class="f8-comparison">
+                <div class="f8-labels">
+                  <div class="f8-row-label"><span>Prediction</span><img src="assets/figure8/intention-error.webp" alt="" aria-hidden="true" width="24" height="24" loading="lazy"></div>
+                  <div class="f8-row-label"><span>Ground Truth</span><img src="assets/figure8/intention-correct.webp" alt="" aria-hidden="true" width="24" height="24" loading="lazy"></div>
+                </div>
+                <div class="f8-intentions">
+                  <div class="f8-intention-row f8-intention-row-pred">
+                    <div class="f8-intention f8-intention-pred" aria-label="Prediction intention">
+                      <div class="f8-copy">
+                        <p><span class="f8-hand f8-left">L:</span><span>Reach and grasp,<br>Eyeglasses, Temple</span></p>
+                        <p><span class="f8-hand f8-right">R:</span><span>&lt; No intention &gt;</span></p>
+                      </div>
+                      <img class="f8-hand-swap" src="assets/figure8/hand-swap.svg" alt="" aria-hidden="true" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="f8-intention-row f8-intention-row-gt">
+                    <div class="f8-intention f8-intention-gt" aria-label="Ground Truth intention">
+                      <div class="f8-copy">
+                        <p><span class="f8-hand f8-left">L:</span><span>&lt; No intention &gt;</span></p>
+                        <p><span class="f8-hand f8-right">R:</span><span>Reach and grasp,<br>Eyeglasses, Temple</span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="f8-forecasts">
+                  <div class="f8-cell" data-kind="ours">
+                  <img class="f8-poster" src="assets/figure8/P0001_83b755aa_000125_000184/ours.webp?v=pagebg1" alt="Predicted future hand-object motion." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0001_83b755aa_000125_000184/ours.mp4?v=pagebg1" data-webm="assets/figure8/P0001_83b755aa_000125_000184/ours.webm?v=pagebg1" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                  <div class="f8-cell" data-kind="gt">
+                  <img class="f8-poster" src="assets/figure8/P0001_83b755aa_000125_000184/gt.webp?v=pagebg1" alt="Ground-truth future hand-object motion." width="768" height="768" loading="lazy" decoding="async">
+                  <video data-src="assets/figure8/P0001_83b755aa_000125_000184/gt.mp4?v=pagebg1" data-webm="assets/figure8/P0001_83b755aa_000125_000184/gt.webm?v=pagebg1" muted playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+                </div>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="f8-dots" role="group" aria-label="Select a failure case">
+            <button class="f8-dot" type="button" data-f8-select="0" aria-label="Show case 1: Purpose Confusion" aria-controls="f8-case-0" aria-pressed="true"><span aria-hidden="true"></span></button>
+            <button class="f8-dot" type="button" data-f8-select="1" aria-label="Show case 2: Contact-Part Confusion" aria-controls="f8-case-1" aria-pressed="false"><span aria-hidden="true"></span></button>
+            <button class="f8-dot" type="button" data-f8-select="2" aria-label="Show case 3: Hand Assignment Error" aria-controls="f8-case-2" aria-pressed="false"><span aria-hidden="true"></span></button>
+          </div>
+          <p id="f8-status" class="sr-only" role="status" aria-live="polite"></p>
+        </div>
+        <p class="f8-discussion">These examples illustrate three failure modes: purpose confusion, contact-part confusion, and hand assignment errors. Such errors can lead to forecasts that deviate from the intended interaction, as when placement is predicted instead of shaking. At the same time, a different contact part or active hand may still offer a viable way to complete the same task. Disagreement with a single recorded future therefore does not necessarily imply failure to capture the underlying interaction goal.</p>
+      </section>
+
+      <div class="intention-results">
+        <div><p class="eyebrow">The effect of intention</p><h3>Structured intentions change<br>the forecast.</h3><p>Predicted intentions improve motion accuracy and interaction success over intention-free conditioning, bringing contact establishment close to oracle performance. A substantial gap remains in precise placement, highlighting the importance of accurate intentions and spatial goals.</p></div>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Motion forecasting across intention conditions"><table><caption>Motion forecasting across intention conditions</caption><thead><tr><th scope="col">Intention</th><th scope="col">H-ADE (cm) ↓</th><th scope="col">O-ADE (cm) ↓</th><th scope="col">Reach-SR (%) ↑</th><th scope="col">Place-Hit (%) ↑</th></tr></thead><tbody><tr><th scope="row">None</th><td><span class="metric-value" data-heading="H-ADE (cm) ↓">6.49</span></td><td><span class="metric-value" data-heading="O-ADE (cm) ↓">1.05</span></td><td><span class="metric-value" data-heading="Reach-SR (%) ↑">56.91</span></td><td><span class="metric-value" data-heading="Place-Hit (%) ↑">18.94</span></td></tr><tr class="our-result"><th scope="row">Predicted</th><td><span class="metric-value" data-heading="H-ADE (cm) ↓">4.16</span></td><td><span class="metric-value" data-heading="O-ADE (cm) ↓">0.72</span></td><td><span class="metric-value" data-heading="Reach-SR (%) ↑">92.43</span></td><td><span class="metric-value" data-heading="Place-Hit (%) ↑">44.93</span></td></tr><tr><th scope="row">Oracle</th><td><span class="metric-value" data-heading="H-ADE (cm) ↓">3.65</span></td><td><span class="metric-value" data-heading="O-ADE (cm) ↓">0.55</span></td><td><span class="metric-value" data-heading="Reach-SR (%) ↑">96.22</span></td><td><span class="metric-value" data-heading="Place-Hit (%) ↑">95.59</span></td></tr></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="citation" class="section-space section-tinted" aria-labelledby="citation-title"><div class="section-wrap citation-layout"><div class="section-heading"><p class="eyebrow">Reference</p><h2 id="citation-title">Build on this work.</h2><p>Gaze2HOI research manuscript, 2026.</p><a class="text-link" href="assets/documents/gaze2hoi-paper.pdf" target="_blank" rel="noopener">Read the paper <span aria-hidden="true">↗</span></a></div><div class="citation-box"><div class="citation-toolbar"><span>BibTeX</span><button id="copy-citation" type="button">Copy citation <span aria-hidden="true">⧉</span></button></div><pre><code id="bibtex">@misc{ma2026gaze2hoi,
+<span class="bibtex-field">  title  = {Gaze2HOI: Gaze-Aware Intention Disambiguation for Egocentric Hand-Object Interaction Forecasting},</span>
+<span class="bibtex-field">  author = {Ma, Chuanyang and Wang, Chenye and Wang, Yixuan and Zhou, Huiling and Qi, Xingqun and Sun, Muyi and Zhang, Man and Shan, Caifeng and Sun, Zhenan},</span>
+<span class="bibtex-field">  year   = {2026},</span>
+<span class="bibtex-field">  note   = {Research manuscript}</span>
+}</code></pre><p id="copy-status" class="sr-only" aria-live="polite"></p></div></div></section>
+  </main>
+</body>
+</html>

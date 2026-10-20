@@ -1,0 +1,28 @@
+.framework-figure > .f4-link {
+  --f4-padding:12px;
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  margin-inline:0;
+  padding:var(--f4-padding);
+  background:#292c31;
+  border:0;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.framework-figure > .f4-link img,
+.framework-figure > .f4-link:hover img {
+  display:block;
+  width:100%;
+  height:auto;
+  opacity:1;
+  transition:none;
+}
+
+@media (max-width:680px) {
+  .framework-figure > .f4-link {
+    --f4-padding:8px;
+    border-radius:12px;
+  }
+}

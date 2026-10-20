@@ -1,0 +1,114 @@
+/* Each result shares one width for its intention and motion: RGB | Prediction | GT. */
+.f8-player {width:min(100%,1060px);margin:28px auto 0;color:var(--text)}
+.f8-discussion {width:100%;margin:16px auto 0;color:var(--muted);font-size:16px;line-height:1.75;text-align:left}
+/* The outer gutter contains the intention pulse without changing column widths. */
+.f8-viewport {position:relative;display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;container-type:inline-size;margin-inline:-12px;padding:8px 12px;isolation:isolate}
+.f8-case {
+  --f8-emphasis:0;
+  --f8-column-gap:28px;
+  --f8-result-gap:24px;
+  --f8-intent-height:176px;
+  --f8-result-width:calc((100cqw - var(--f8-column-gap) - var(--f8-result-gap) - var(--f8-intent-height) - 12px) / 2.82);
+  --f8-observation-width:calc(var(--f8-intent-height) + 12px + var(--f8-result-width) * .82);
+  grid-area:1 / 1;
+  display:grid;
+  grid-template-columns:var(--f8-observation-width) minmax(0,1fr);
+  column-gap:var(--f8-column-gap);
+  align-items:stretch;
+  min-width:0;
+  visibility:hidden;
+  pointer-events:none;
+  outline:none;
+}
+/* Fixed framing from all 30 frames of each GT/prediction pair. Bottom padding
+   is removed equally for videos and posters; the taller second case fits in
+   the same stage without cropping its hand or target object. */
+.f8-case[data-case="0"] {--f8-media-width:100%;--f8-media-tail:22.135417%}
+.f8-case[data-case="1"] {--f8-media-width:83.5%;--f8-media-tail:2.083333%}
+.f8-case[data-case="2"] {--f8-media-width:100%;--f8-media-tail:25%}
+.f8-case[data-active="true"],.f8-case[data-transition] {visibility:visible}
+.f8-case[data-active="true"] {pointer-events:auto;z-index:2}
+.f8-case[data-transition] {will-change:transform}
+.f8-case[data-transition="outgoing"] {z-index:3;pointer-events:none}
+.f8-case:focus-visible {outline:1px solid #9daeff;outline-offset:-1px;border-radius:8px}
+.f8-observation-column,.f8-comparison {min-width:0}
+.f8-observation-column {align-self:start}
+.f8-comparison {display:grid;grid-template-rows:22px var(--f8-intent-height) auto;gap:12px}
+.f8-column-label,.f8-row-label {margin:0;font-size:13px;font-weight:550;line-height:20px;text-align:center;color:#c7cbd9;letter-spacing:-.01em}
+.f8-column-label {height:22px;margin-bottom:12px}
+.f8-cell {position:relative;min-width:0;overflow:hidden;aspect-ratio:1;border-radius:7px;background:var(--bg);pointer-events:none}
+.f8-cell video,.f8-poster {position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;background:var(--bg)}
+.f8-poster {z-index:1}
+.f8-cell video {z-index:2;opacity:0}
+.f8-case[data-active="true"][data-ready="true"] video,
+.f8-case[data-transition][data-ready="true"] video {opacity:1}
+.f8-labels,.f8-intentions,.f8-forecasts {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--f8-result-gap);min-width:0}
+.f8-labels {height:22px}
+.f8-row-label {display:flex;align-items:center;justify-content:center;gap:8px}
+.f8-row-label img {width:20px;height:20px;object-fit:contain}
+.f8-intentions {min-height:0;align-items:stretch;position:relative;z-index:2;pointer-events:none}
+.f8-intention-row {display:flex;min-width:0}
+.f8-intention {position:relative;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;width:100%;min-width:0;padding:14px 12px;border:1px solid #414b60;border-radius:9px;background:#171d28;color:#e1e5ee;transform:scale(calc(1 + var(--f8-emphasis) * .035));transform-origin:center}
+.f8-copy {width:fit-content;max-width:100%;min-width:0;font-family:"Times New Roman",Times,serif;font-size:16px;line-height:1.32}
+.f8-copy p {display:grid;grid-template-columns:14px minmax(0,1fr);gap:6px;margin:0;min-width:0}
+.f8-copy p + p {margin-top:10px}
+.f8-copy p>span:last-child {min-width:0}
+.f8-case:is([data-case="1"],[data-case="2"]) .f8-copy {font-size:18px}
+.f8-case:is([data-case="1"],[data-case="2"]) .f8-copy p + p {margin-top:18px}
+.f8-hand {flex:none;font-weight:400}
+.f8-left {color:#4e95d9}
+.f8-right {color:#ff999b}
+.f8-intention em {font-style:normal;font-weight:700;color:#4ea72e}
+.f8-intention-pred em {color:#ff0000}
+.f8-case[data-case="1"] .f8-intention-pred em {color:#c00000}
+.f8-hand-swap {position:absolute;right:27px;top:calc(50% + 3px);width:64px;height:64px;transform:translateY(-50%);pointer-events:none}
+.f8-case[data-case="2"] .f8-intention-pred {padding-inline:30px}
+.f8-forecasts {align-items:start}
+.f8-forecasts .f8-cell {width:100%;height:auto;aspect-ratio:100 / 82;border-radius:0}
+.f8-forecasts .f8-cell video,.f8-forecasts .f8-poster {inset:auto;left:50%;bottom:0;width:var(--f8-media-width,100%);height:auto;aspect-ratio:1;transform:translate(-50%,var(--f8-media-tail,0%))}
+.f8-dots {display:flex;justify-content:center;align-items:center;gap:0;margin-top:18px}
+.f8-dot {position:relative;display:grid;place-items:center;width:24px;height:30px;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.f8-dot span {display:block;width:9px;height:9px;border:1px solid #71768c;border-radius:50%;background:transparent;transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.f8-dot[aria-pressed="true"] span {background:#9daeff;border-color:#9daeff;transform:scale(1.12)}
+.f8-dot:hover span {border-color:#c2cdff}
+.f8-dot:focus-visible {outline-offset:1px}
+@media(max-width:1050px) {
+  .f8-case {--f8-column-gap:24px;--f8-result-gap:20px;--f8-intent-height:196px}
+  .f8-column-label,.f8-row-label {font-size:12px}
+  .f8-intention {padding:12px 10px}
+  .f8-copy {font-size:15px}
+  .f8-case:is([data-case="1"],[data-case="2"]) .f8-copy {font-size:17px}
+  .f8-copy p {gap:5px}
+  .f8-hand-swap {right:22px}
+}
+@media(max-width:960px) {
+  .f8-case {--f8-result-gap:16px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr;row-gap:24px}
+  .f8-observation-column {width:min(72%,320px);margin-inline:auto}
+  .f8-comparison {width:min(100%,580px);margin-inline:auto;grid-template-rows:22px minmax(min-content,1fr) auto}
+  .f8-intentions {min-height:168px}
+  .f8-hand-swap {right:18px}
+  .f8-copy {font-size:16px}
+  .f8-case:is([data-case="1"],[data-case="2"]) .f8-copy {font-size:18px}
+}
+@media(max-width:540px) {
+  .f8-player {margin-top:20px}
+  .f8-discussion {margin-top:12px;font-size:14px}
+  .f8-case {--f8-result-gap:12px;row-gap:18px}
+  .f8-comparison {row-gap:10px}
+  .f8-column-label,.f8-row-label {font-size:11px}
+  .f8-intention {padding:12px 8px}
+  .f8-copy {font-size:13px}
+  .f8-copy p {grid-template-columns:11px minmax(0,1fr);gap:4px}
+  .f8-copy p + p {margin-top:8px}
+  .f8-case:is([data-case="1"],[data-case="2"]) .f8-copy {font-size:14px}
+  .f8-case:is([data-case="1"],[data-case="2"]) .f8-copy p + p {margin-top:12px}
+  .f8-row-label {gap:5px}
+  .f8-row-label img {width:18px;height:18px}
+  .f8-hand-swap {right:12px;top:calc(50% + 1px);width:44px;height:44px}
+  .f8-case[data-case="2"] .f8-intention-pred {padding-inline:12px}
+  .f8-dots {margin-top:12px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .f8-intention {transform:none}
+  .f8-dot span {transition:none}
+}
