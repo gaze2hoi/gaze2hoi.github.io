@@ -3,11 +3,6 @@
   "description": "Runtime file integrity snapshot at packaging time; regenerate after deliberate website updates.",
   "files": [
     {
-      "path": "assets/documents/gaze2hoi-paper.pdf",
-      "bytes": 31402923,
-      "sha256": "a91600b975706a34b54c6a5399aae73691ae359f03d27c745f9011052685eafb"
-    },
-    {
       "path": "assets/favicon.svg",
       "bytes": 1018,
       "sha256": "ea4fda975451a3d17367eddde63383adf07528ceb7829c9d6be29a17127a01b4"
