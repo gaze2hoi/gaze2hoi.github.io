@@ -1,5 +1,5 @@
 {
-  "snapshot_date": "2026-10-20",
+  "snapshot_date": "2026-10-21",
   "description": "Runtime file integrity snapshot at packaging time; regenerate after deliberate website updates.",
   "files": [
     {
@@ -194,8 +194,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 91738,
-      "sha256": "bef5afe696c6c7dc61313bf1a4f54f70a750e3972df4fb6525afa421122fc6d8"
+      "bytes": 92013,
+      "sha256": "d4bfcfea80d4ef3bca9cae71592b40f10cdecc6dc36183912d3cff337524edfc"
     },
     {
       "path": "js/figure2.js",
