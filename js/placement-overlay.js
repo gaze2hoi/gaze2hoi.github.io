@@ -28,7 +28,6 @@ window.createPlacementOverlay = function createPlacementOverlay(canvas, data, in
   canvas.width = data.displaySize;
   canvas.height = data.displaySize;
   let previousKey = "";
-  let preparedCoordinateKey = "";
   const mix = (a, b, t) => a + (b - a) * t;
   const ease = value => {
     const t = Math.max(0, Math.min(1, value));
@@ -205,19 +204,6 @@ window.createPlacementOverlay = function createPlacementOverlay(canvas, data, in
       bridgeFrames, predictionStart, reduceMotion }) {
       const relevant = sampleId === data.id;
       const point = relevant && intentionCard?.querySelector('.predicted-intention-row[data-hand="right"] .intention-field[data-field="point"]');
-      // Keep the coordinate visible before the line starts on narrow screens.
-      if (!relevant || frame < reveal.intentionReady) preparedCoordinateKey = "";
-      if (point && frame >= reveal.intentionReady) {
-        const fields = point.closest(".predicted-intention-fields");
-        const key = `${canvas.clientWidth}:${fields.clientWidth}:${fields.scrollWidth}`;
-        if (key !== preparedCoordinateKey) {
-          const target = point.getBoundingClientRect(), viewport = fields.getBoundingClientRect();
-          if (target.right > viewport.right - 6 || target.left < viewport.left) {
-            fields.scrollLeft = fields.scrollWidth - fields.clientWidth;
-          }
-          preparedCoordinateKey = key;
-        }
-      }
       const showing = relevant && frame >= reveal.lineStart;
       canvas.hidden = !showing;
       if (!showing) {

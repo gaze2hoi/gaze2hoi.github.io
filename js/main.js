@@ -1,5 +1,27 @@
 "use strict";
 
+const sectionTitles = [...document.querySelectorAll(".eyebrow + :is(h2,h3)")];
+const headingMeasure = document.createElement("canvas").getContext("2d");
+
+function headingInset(element) {
+  const style = getComputedStyle(element);
+  headingMeasure.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  const first = element.textContent.trim()[0];
+  const glyph = style.textTransform === "uppercase" ? first.toUpperCase() : first;
+  return -headingMeasure.measureText(glyph).actualBoundingBoxLeft;
+}
+
+function alignSectionTitles() {
+  for (const title of sectionTitles) {
+    const offset = headingInset(title.previousElementSibling) - headingInset(title);
+    title.style.setProperty("--heading-offset", `${offset}px`);
+  }
+}
+
+window.addEventListener("resize", alignSectionTitles);
+document.fonts.ready.then(alignSectionTitles);
+alignSectionTitles();
+
 const overviewCopy = document.querySelector(".overview-text");
 const overviewParagraph = overviewCopy.querySelector("p");
 const overviewAlignmentTarget = document.querySelector(".demo-examples button");
@@ -88,6 +110,29 @@ const heroBridgeForeground = document.querySelector("#geometry-bridge-foreground
 const heroIntention = document.querySelector("#predicted-intention");
 const heroIntentionRows = document.querySelector("#predicted-intention-rows");
 const exampleButtons = [...document.querySelectorAll("[data-example]")];
+
+const contactButton = document.querySelector('[data-example="establish-contact"]');
+const contactLabel = contactButton.querySelector(".demo-label");
+contactLabel.classList.add("demo-label-single");
+
+function fitContactLabel() {
+  contactLabel.style.removeProperty("font-size");
+  const style = getComputedStyle(contactButton);
+  const available = contactButton.clientHeight - parseFloat(style.paddingTop)
+    - parseFloat(style.paddingBottom) - 1;
+  if (available <= 0) return;
+  let size = parseFloat(style.fontSize);
+  for (let pass = 0; pass < 3; pass++) {
+    const height = contactLabel.getBoundingClientRect().height;
+    if (height <= available) break;
+    size *= available / height;
+    contactLabel.style.fontSize = `${size}px`;
+  }
+}
+
+new ResizeObserver(fitContactLabel).observe(contactButton);
+document.fonts.ready.then(fitContactLabel);
+
 const heroTimeline = window.GAZE2HOI_HERO;
 const heroObjects = window.GAZE2HOI_OBJECTS;
 const heroGazeData = window.GAZE2HOI_GAZE_REPLAY;
@@ -108,7 +153,6 @@ const historyReadingFrames = geometryBridgeStart - heroTimeline.historyStart - h
 // Put Down uses its held RGB frames for a sequential explanation: read the
 // intention, trace the coordinate to its target, reveal the marker, then pause.
 const putDownPlacementReveal = {
-  intentionReady: heroTimeline.intentionStart + heroTimeline.intentionFadeFrames,
   lineStart: 193, lineEnd: 201, markerStart: 201, markerEnd: 205,
   holdSeconds: 3,
 };
@@ -123,7 +167,6 @@ let pendingExample = null;
 let sampleSwitchToken = 0;
 let sampleSwitchAnimation = null;
 let intentionLayoutPending = true;
-const intentionMeasure = document.createElement("canvas").getContext("2d");
 
 heroGaze.setAttribute("viewBox", `0 0 ${heroGazeData.displaySize} ${heroGazeData.displaySize}`);
 heroGaze.querySelector(".gaze-dot-outline").setAttribute("r", heroGazeData.marker.outerRadius);
@@ -382,19 +425,11 @@ function fitIntentionRows() {
     const fields = row.querySelector(".predicted-intention-fields");
     const tokens = [...fields.querySelectorAll(".intention-field")];
     if (!tokens.length) continue;
-    const available = fields.clientWidth - 1;
+    const available = fields.getBoundingClientRect().width - 1;
     if (available <= 0) return;
-    const style = getComputedStyle(row);
-    const size = parseFloat(style.fontSize);
-    intentionMeasure.font = `${style.fontWeight} ${size}px ${style.fontFamily}`;
-    const widths = tokens.map(token => intentionMeasure.measureText(token.textContent).width);
-    const separatorWidth = intentionMeasure.measureText("·").width + .6 * size;
-    const lineWidth = values => values.reduce((sum, width) => sum + width, 0)
-      + Math.max(0, values.length - 1) * separatorWidth;
-    const widest = lineWidth(widths);
-    // Fit one complete line on desktop. On very narrow screens preserve a
-    // readable 10 px minimum and allow that same line to scroll horizontally.
-    fields.style.fontSize = `${Math.max(10, size * Math.min(1, available / (widest + .5)))}px`;
+    let size = parseFloat(getComputedStyle(row).fontSize);
+    fields.classList.remove("is-scrollable");
+    fields.style.fontSize = `${size}px`;
     const line = document.createElement("span");
     line.className = "intention-line";
     tokens.forEach((token, index) => {
@@ -408,9 +443,16 @@ function fitIntentionRows() {
       line.append(token);
     });
     fields.replaceChildren(line);
-    fields.classList.remove("is-scrollable");
+    // Measure the rendered line so system fonts and shaping match the page.
+    for (let pass = 0; pass < 3; pass++) {
+      const width = line.getBoundingClientRect().width;
+      if (width <= available || size <= 10) break;
+      size = Math.max(10, size * available / width);
+      fields.style.fontSize = `${size}px`;
+    }
     const scrollable = fields.scrollWidth > fields.clientWidth + 1;
     fields.classList.toggle("is-scrollable", scrollable);
+    fields.scrollLeft = 0;
     fields.tabIndex = scrollable ? 0 : -1;
     if (scrollable) fields.setAttribute("aria-label", `${row.querySelector(".predicted-intention-hand").textContent} intention; scroll horizontally for all fields`);
     else fields.removeAttribute("aria-label");

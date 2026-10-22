@@ -1,5 +1,5 @@
 {
-  "snapshot_date": "2026-10-21",
+  "snapshot_date": "2026-10-22",
   "description": "Runtime file integrity snapshot at packaging time; regenerate after deliberate website updates.",
   "files": [
     {
@@ -184,13 +184,13 @@
     },
     {
       "path": "css/style.css",
-      "bytes": 28049,
-      "sha256": "3546a846ece19e5f4808c70d27d7f429e58f1b15a6803b047a406e8e353f4f7b"
+      "bytes": 28231,
+      "sha256": "14cd867b2662612f690821e3b046171c7a8c1dff68c4a9694bb0cdf682812916"
     },
     {
       "path": "index.html",
-      "bytes": 91968,
-      "sha256": "ac265573efd49e24fc0894bc0c4f7b7a6f105ecdd85ce8543b8e349c1c24f68b"
+      "bytes": 91970,
+      "sha256": "bb864fa55dafa10e9797390b567e83c5b26338335b0217465c7156051b8f4c9d"
     },
     {
       "path": "js/figure2.js",
@@ -214,13 +214,13 @@
     },
     {
       "path": "js/main.js",
-      "bytes": 34585,
-      "sha256": "e02de8dad7aa65c34a9bd2c509f26be5681c21decbb3c4d0a2000d73e42b53ca"
+      "bytes": 35854,
+      "sha256": "2f14bdf140ba697bed8962da3209ba162af15f0c5438561278a1ccac6142858c"
     },
     {
       "path": "js/placement-overlay.js",
-      "bytes": 12150,
-      "sha256": "baa12ae90fbc18c5881023444248f6cfd13538c5150648d69728102e7d964e19"
+      "bytes": 11376,
+      "sha256": "ecdeb68d633dbd1931547c62b17a5f875f320b74c92014806215aee1d4c83f91"
     },
     {
       "path": "media/figure1/gaze-replay/stills/establish-contact.jpg",

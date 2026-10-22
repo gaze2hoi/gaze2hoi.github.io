@@ -120,6 +120,11 @@ h3 {
   line-height:1.3;
 }
 
+.eyebrow + :is(h2,h3) {
+  position:relative;
+  left:var(--heading-offset,0px);
+}
+
 .text-link {
   display:inline-flex;
   align-items:center;
@@ -1194,6 +1199,12 @@ pre {
   text-align:center;
   max-height:100%;
   max-width:100%;
+}
+
+.demo-examples button .demo-label-single {
+  white-space:nowrap;
+  max-height:none;
+  flex:none;
 }
 
 .demo-examples button[aria-pressed="true"] {
